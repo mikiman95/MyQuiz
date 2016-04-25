@@ -12,6 +12,10 @@ router.get("/question",quizController.question);
 /*GET Check*/
 router.get("/check",quizController.check);
 
+router.get("/author",function(req,res,next){
+	res.render("author");
+});
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index');
