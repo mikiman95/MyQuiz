@@ -43,11 +43,28 @@ sequelize
 			.then(function (c){
 				if(c===0){
 					return Quiz
-					.create({question:'Capital de Italia',answer:'Roma'})
+					.bulkCreate([
+						{question:'Capital de España',answer:'Madrid'},
+						{question:'Capital de Italia',answer:'Roma'},
+						{question:'Mi Edad',answer:'20'}
+
+						])
 					.then(function(){
 						console.log("Base de datos inicializada con datos");
 					});
 				}
+				/*
+					else{
+					
+					return Quiz.destroy({
+						where:{
+							question : "/Capital de España/"
+						},
+						truncate:true				
+					});
+				}
+				*/
+
 			});
 
 }).catch(function(error){

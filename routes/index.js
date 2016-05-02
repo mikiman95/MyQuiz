@@ -6,12 +6,17 @@ var quizController= require('../controllers/MyQuiz_Controller');
 
 
 
-/*GET question*/
-router.get("/question",quizController.question);
+/*GET quizzes*/
+router.get("/quizzes",quizController.index);
 
-/*GET Check*/
-router.get("/check",quizController.check);
+/*GET quiz 23*/
+router.get("/quizzes/:quizId(\\d+)",quizController.show);
 
+/*GET Check del quiz 23*/
+router.get("/quizzes/:quizId(\\d+)/check",quizController.check);
+
+
+//GET author
 router.get("/author",function(req,res,next){
 	res.render("author");
 });
