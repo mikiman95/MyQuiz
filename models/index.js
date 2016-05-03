@@ -44,8 +44,9 @@ sequelize
 				if(c===0){
 					return Quiz
 					.bulkCreate([
-						{question:'Capital de España',answer:'Madrid'},
 						{question:'Capital de Italia',answer:'Roma'},
+						{question:'Capital de España',answer:'Madrid'},
+						{question:'Y uno y dos',answer:'y tres'},
 						{question:'Mi Edad',answer:'20'}
 
 						])

@@ -1,4 +1,22 @@
 
+
+		
+        <div class="main">
+        	<!--Formulario del Buscador de Preguntas:-->
+			<form method="get" action="/quizzes">
+				<!--Parametros Ocultos:-->
+				<!--<input type="hidden" name="AnswerIndex" value="1"/>'  -->
+
+				<!-- Input box & Submit Button -->
+				<input type = "text" name="search" placeholder="Texto a Buscar"/>  <!-- search es el query que uso.-->
+				<input type = "submit" value="Buscar"/><br>
+
+			</form>
+
+        </div>
+  
+
+
 		<table>
 			<%  for(var i in quizzes){  %>
 				<tr>
