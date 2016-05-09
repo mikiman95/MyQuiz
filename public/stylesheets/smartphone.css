@@ -3,6 +3,7 @@ body {background: #333;}
 #page:after{content: "Smartphone Layout";}  /*       This can be used, but isnt recomended*/
 .no-narrow{display: none;}
 
+
 body{font-size: xx-large}
 footer,input{font-size: large;}
 

@@ -13,11 +13,19 @@ router.param("quizId",quizController.autoload);
 /*GET quizzes*/
 router.get("/quizzes",quizController.index);
 
+//Get quizzes/new  returns the formulario to create a new question
+router.get("/quizzes/new",quizController.new);
+
+//POST quizzes/create
+router.post("/quizzes",quizController.create);
+
+
 /*GET quiz 23*/
 router.get("/quizzes/:quizId(\\d+)",quizController.show);
 
 /*GET Check del quiz 23*/
 router.get("/quizzes/:quizId(\\d+)/check",quizController.check);
+
 
 
 //GET author

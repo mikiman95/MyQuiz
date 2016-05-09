@@ -40,6 +40,8 @@ exports.index=function(req,res,next){
 
 };
 
+
+
 //GET /quizzes/:id
 exports.show=function(req,res,next){
 	var answer=req.query.answer||'';
@@ -57,6 +59,29 @@ exports.check=function(req,res,next){
 
 
 };
+
+
+//Get /quizzes/new
+exports.new=function(req,res,next){
+	var quizVacio = models.Quiz.build({question:"",answer:""});		//crea un quiz vacío
+	res.render("quizzes/new",{quiz:quizVacio});
+}
+
+//POST /quizzes/create
+exports.create=function(req,res,next){
+	var quiz = models.Quiz.build({question:req.body.quiz.question,answer:req.body.quiz.question});
+
+	//Guardarlo en la Base de Datos;
+	quiz.save({fields:["question","answer"]})
+		.then(function(quiz){
+			res.redirect("/quizzes");		//Si exito, servidor dice al cliente "Ahora pideme un get /quizzes"
+		})
+		.catch(function(error){
+			next(error);
+		});
+
+};
+
 
 
 /*
