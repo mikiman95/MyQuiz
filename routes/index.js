@@ -4,6 +4,10 @@ var quizController= require('../controllers/MyQuiz_Controller');
 
 
 
+//AutoLoad: de rutas que usan :quizId
+router.param("quizId",quizController.autoload);
+
+
 
 
 /*GET quizzes*/
