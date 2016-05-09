@@ -74,9 +74,11 @@ exports.create=function(req,res,next){
 	//Guardarlo en la Base de Datos;
 	quiz.save({fields:["question","answer"]})
 		.then(function(quiz){
+			req.flash("success","Quiz creado con Éxito.")
 			res.redirect("/quizzes");		//Si exito, servidor dice al cliente "Ahora pideme un get /quizzes"
 		})
 		.catch(function(error){
+			req.flash("error","Error al crear un Quiz: "+error.message);
 			next(error);
 		});
 
