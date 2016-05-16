@@ -19,6 +19,14 @@ router.get("/quizzes/new",quizController.new);
 //POST quizzes/create
 router.post("/quizzes",quizController.create);
 
+//Get edit quiz X    Tema 15: editar Preguntas
+router.get("/quizzes/:quizId(\\d+)/edit",quizController.edit);
+router.put("/quizzes/:quizId(\\d+)",quizController.update);
+
+//Tema 16 Borrar Quiz
+router.delete("/quizzes/:quizId(\\d+)",quizController.destroy);
+
+
 
 /*GET quiz 23*/
 router.get("/quizzes/:quizId(\\d+)",quizController.show);

@@ -3,27 +3,12 @@
     <div class="main">
     	<p>Añadir una pregunta:</p>
     	<!--Formulario de Create New Question:-->
-		<form method="post" action="/quizzes">
-			<!--Parametros Ocultos:-->
-			<!--<input type="hidden" name="AnswerIndex" value="1"/>'  -->
-
-			<!-- Question Input box-->
-			<label for="preg">Pregunta:</label>			<!-- Label No visible en smartphone layout -->
-			<input type = "text" id="preg" name = "quiz[question]" value="<%=quiz.question%>" placeholder="Pregunta"/> 
-
-			<br>
-
-			<!-- Answer Input box & Submit Button -->
-			<label for="resp">Respuesta:</label>			<!-- Label No visible en smartphone layout -->
-			<input type = "text" id="resp" name = "quiz[answer]" value="<%=quiz.answer%>" placeholder="Respuesta"/> 
-			
-			<br>
-
-			<!--Submit button--> 
-			<input type ="submit" value="Salvar">
-			<!--Cancel button--> 
-			<a href="/quizzes"><button type="button">Cancelar</button></a>  <!-- Hipervínculo en formato de boton. -->
-		</form>
+		
+		<p>
+			<form method="post" action ="/quizzes">
+				<% include _form.ejs%>
+			</form>
+		</p>
 
 
 			
