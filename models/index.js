@@ -35,6 +35,10 @@ var sequelize = new Sequelize(url,
 var Quiz = sequelize.import(path.join(__dirname,"quiz"));  
 
 
+/*
+THIS SECTION IS USED UNTIL Tema 17. 
+After tema 17, sequelize-cli takes care od syncronization and inicialization of the BBDD
+
 //sequelize.sync() crea e inicializa tabla de preguntas en DB
 sequelize
 .sync()
@@ -54,17 +58,16 @@ sequelize
 						console.log("Base de datos inicializada con datos");
 					});
 				}
-				/*
-					else{
-					
-					return Quiz.destroy({
-						where:{
-							question : "/Capital de España/"
-						},
-						truncate:true				
-					});
-				}
-				*/
+				
+					//else{
+					//return Quiz.destroy({
+					//	where:{
+					//		question : "/Capital de España/"
+					//	},
+					//	truncate:true				
+					//});
+				//}
+				
 
 			});
 
@@ -72,6 +75,12 @@ sequelize
 	console.log("Error Sincronizando las tablas de la BBDD:",error);
 	process.exit;
 });
+
+
+
+
+
+*/
 
 
 //Exporta definicion de tabla Quiz
