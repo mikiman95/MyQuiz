@@ -57,6 +57,17 @@ exports.Comment=Comment;
 
 
 
+//Tema 19: Tabla de usuarios:
+var User = sequelize.import(path.join(__dirname,"user"));
+//Quiz.belongsTo(User);
+//User.hasMany(Quiz);
+
+
+
+
+
+
+
 
 /*
 THIS SECTION IS USED UNTIL Tema 17. 
