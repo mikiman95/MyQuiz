@@ -3,10 +3,9 @@ var Sequelize = require("sequelize");
 
 
 
-
+/*
 exports.autoload =function(req,res,next,quizId){
-	//models.Quiz.findById(quizId}) //alternativa previa: findOne() busca la primera
-		models.Quiz.findById(quizId,{include:[models.Comment]}) //the include helps in the views/quizzes/show.ejs
+	models.Quiz.findById(quizId) //alternativa previa: findOne() busca la primera
 		.then(function(quiz){
 			if(quiz){
 				req.quiz = quiz;
@@ -17,66 +16,28 @@ exports.autoload =function(req,res,next,quizId){
 		}).catch(function(error){next(error);});
 };
 
+*/
 
 
 
-//GET  /quizes?search=texto_a_buscar   con el query opcional
-exports.index=function(req,res,next){
+//GET  /quizes/:quizId/comments/new)
+exports.new=function(req,res,next){
 
-	var search = req.query.search||"";
-	if(search!==""){
-		search= ModifyString(search); //url encoded creo.
-		models.Quiz.findAll({where:["question like ?",search],order:[["question","ASC"]]}) // o podría haber usado "DESC" para descendente
-			.then(function(quizzes){
-				//console.log(search);
-				res.render('quizzes/index.ejs',{quizzes:quizzes});
-			}).catch(function(error){next(error);});
-	}else{
-		models.Quiz.findAll()
-			.then(function(quizzes){
-					res.render('quizzes/index.ejs',{quizzes:quizzes});
-			}).catch(function(error){next(error);});
-	}
+	var comment = models.Comment.build({text:""});
+	res.render('comments/new',{comment:comment, quiz: req.quiz});
 	
 
 };
 
-
-
-//GET /quizzes/:id
-exports.show=function(req,res,next){
-	var answer=req.query.answer||'';
-	res.render('quizzes/show',{quiz:req.quiz,answer:answer});
-		
-
-};
-
-
-//GET /quizzes/:id/check
-exports.check=function(req,res,next){
-	var answer=req.query.answer||"";
-	var result = answer===req.quiz.answer? "Correcta":"Incorrecta";
-	res.render("quizzes/result",{quiz:req.quiz,result:result,answer:answer});
-
-
-};
-
-
-//Get /quizzes/new
-exports.new=function(req,res,next){
-	var quizVacio = models.Quiz.build({question:"",answer:""});		//crea un quiz vacío
-	res.render("quizzes/new",{quiz:quizVacio});
-}
-
-//POST /quizzes/create
+//POST /quizzes/:quizId/comments
 exports.create=function(req,res,next){
-	var quiz = models.Quiz.build({question:req.body.quiz.question,answer:req.body.quiz.answer});
+	var comment = models.Comment.build({text:req.body.comment.text,QuizId:req.quiz.id});
 
 	//Guardarlo en la Base de Datos;
-	quiz.save({fields:["question","answer"]})
-		.then(function(quiz){
-			req.flash("success","Quiz creado con Éxito.")
-			res.redirect("/quizzes");		//Si exito, servidor dice al cliente "Ahora pideme un get /quizzes"
+	comment.save()
+		.then(function(comment){
+			req.flash("success","Commentario creado con Éxito.")
+			res.redirect("/quizzes/"+req.quiz.id);		//Si exito, servidor dice al cliente "Ahora pideme un get /quizzes/id"
 		})
 		.catch(Sequelize.ValidationError,function(error){
 				req.flash("error","Errores en el formulario:");
@@ -84,16 +45,20 @@ exports.create=function(req,res,next){
 				for(var i in error.errors){
 					req.flash("error",error.errors[i].value);
 				};
-				res.render("quizzes/new",{quiz:quiz});
+				res.render("comments/new",{comment:comment, quiz: req.quiz});
 		})
 
 		.catch(function(error){
-			req.flash("error","Error al crear un Quiz: "+error.message);
+			req.flash("error","Error al crear un Comentario: "+error.message);
 			next(error);
 		});
 
 };
 
+
+
+
+/*
 
 
 //TEMA 15 Editar Quizzes
@@ -164,7 +129,7 @@ exports.destroy = function(req, res, next) {
 	mostrará todas las preguntas que tengan "uno" seguido de "dos", 
 	independientemente de lo que haya entre "uno" y "dos". 
 	Mas información en: http://docs.sequelizejs.com/en/latest/docs/querying/.
-*/
+
 ModifyString=function(string){
 	
 	console.log("search antes: ZZZ"+string+"ZZZ")	
@@ -180,3 +145,5 @@ ModifyString=function(string){
 	console.log("search despues: ZZZ"+string+"ZZZ");
 	return string;
 }
+
+*/

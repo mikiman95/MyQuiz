@@ -1,0 +1,24 @@
+	
+	
+    <div class="main">
+
+    	<p>Añadir un comentario:</p>
+    	<!--Formulario de Create New Question:-->
+		
+		<p>
+			<form method="post" action ="/quizzes/<%=quiz.id%>/comments/">
+				<input type ="text" 
+						id = "comment"
+						name="comment[text]"
+						value ="";
+						placeholder="Comentario"
+				/>
+
+				<button type="submit">Enviar</button>
+
+			</form>
+		</p>
+
+    </div>
+
+

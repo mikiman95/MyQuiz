@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var quizController= require('../controllers/MyQuiz_Controller');
+var commentController = require('../controllers/comment_controller');
 
 
 
@@ -26,7 +27,9 @@ router.put("/quizzes/:quizId(\\d+)",quizController.update);
 //Tema 16 Borrar Quiz
 router.delete("/quizzes/:quizId(\\d+)",quizController.destroy);
 
-
+//Tema 18: Crear Comentario:
+router.get("/quizzes/:quizId(\\d+)/comments/new",commentController.new);
+router.post("/quizzes/:quizId(\\d+)/comments",commentController.create);
 
 /*GET quiz 23*/
 router.get("/quizzes/:quizId(\\d+)",quizController.show);

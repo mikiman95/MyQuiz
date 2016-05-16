@@ -34,6 +34,29 @@ var sequelize = new Sequelize(url,
 //QUIZ tendra la forma que defini en models/quiz.js  Es decir, una fila de la tabla
 var Quiz = sequelize.import(path.join(__dirname,"quiz"));  
 
+//Exporta definicion de tabla Quiz
+exports.Quiz=Quiz;
+
+
+//Tema 18: Comentarios:
+//Importar la definicion de la tabla de Comments de models/comment.js
+var Comment = sequelize.import(path.join(__dirname,"comment"));
+
+//Relaciones entre odulos Quiz y Comment
+Comment.belongsTo(Quiz);
+Quiz.hasMany(Comment);  //1-N
+
+//Exporta definicion de tabla Comment
+exports.Comment=Comment;
+
+/*	A   B
+	1 a 1:   B.belongsTo(A)		and A.hasOne(B)				ejeplo: una pregunta tiene un fichero asociado
+	1 a N: 	 B.belongsTo(A)		and A.hasMany(B)			ejemplo: una pregunta puede tener varios comentarios asociados
+	M a N: 	 B.BelongsToMany(A) and A.belongsToMany(B)		ejemplo: N preguntas gustan (se asocian) a N usuarios
+*/
+
+
+
 
 /*
 THIS SECTION IS USED UNTIL Tema 17. 
@@ -82,6 +105,3 @@ sequelize
 
 */
 
-
-//Exporta definicion de tabla Quiz
-exports.Quiz=Quiz;
