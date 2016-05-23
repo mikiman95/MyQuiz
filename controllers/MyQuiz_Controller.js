@@ -95,10 +95,18 @@ exports.new=function(req,res,next){
 
 //POST /quizzes/create
 exports.create=function(req,res,next){
-	var quiz = models.Quiz.build({question:req.body.quiz.question,answer:req.body.quiz.answer});
+	var authorId = req.session.user && req.session.user.id || 0;
+
+	var quiz = models.Quiz.build(
+		{
+			question:req.body.quiz.question,
+			answer:req.body.quiz.answer,
+			AuthorId: authorId
+		}
+	);
 
 	//Guardarlo en la Base de Datos;
-	quiz.save({fields:["question","answer"]})
+	quiz.save({fields:["question","answer","AuthorId"]})
 		.then(function(quiz){
 			req.flash("success","Quiz creado con Éxito.")
 			res.redirect("/quizzes");		//Si exito, servidor dice al cliente "Ahora pideme un get /quizzes"

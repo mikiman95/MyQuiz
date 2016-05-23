@@ -59,8 +59,10 @@ exports.Comment=Comment;
 
 //Tema 19: Tabla de usuarios:
 var User = sequelize.import(path.join(__dirname,"user"));
-//Quiz.belongsTo(User);
-//User.hasMany(Quiz);
+
+//Tema 22 Autores de Quizzes
+User.hasMany(Quiz,{foreignKey:"AuthorId"});
+Quiz.belongsTo(User,{as:"Author",foreignKey:"AuthorId"});
 
 //Exporta definicion de tabla User
 exports.User =User; 
