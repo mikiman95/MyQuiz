@@ -62,7 +62,8 @@ var User = sequelize.import(path.join(__dirname,"user"));
 //Quiz.belongsTo(User);
 //User.hasMany(Quiz);
 
-
+//Exporta definicion de tabla User
+exports.User =User; 
 
 
 

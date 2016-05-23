@@ -18,24 +18,49 @@ exports.autoload =function(req,res,next,quizId){
 };
 
 
+exports.MyFormatMW=function(req,res,next,format){
+	if(format==="json"){ 
+		req.format= "json";
+		console.log("Should be JSON format");
+	}
+	next();
+	
+}
+
+
+
 
 
 //GET  /quizes?search=texto_a_buscar   con el query opcional
 exports.index=function(req,res,next){
+	console.log("Entering get index");
 
 	var search = req.query.search||"";
 	if(search!==""){
 		search= ModifyString(search); //url encoded creo.
 		models.Quiz.findAll({where:["question like ?",search],order:[["question","ASC"]]}) // o podría haber usado "DESC" para descendente
 			.then(function(quizzes){
-				//console.log(search);
 				res.render('quizzes/index.ejs',{quizzes:quizzes});
 			}).catch(function(error){next(error);});
 	}else{
 		models.Quiz.findAll()
 			.then(function(quizzes){
+				/*
+				if(req.format){
+					console.log("Should have Rendered JSON format");
+				
+					res.render('quizzes/index.ejs',{format:req.format,quizzes:quizzes});
+
+				}else{
 					res.render('quizzes/index.ejs',{quizzes:quizzes});
-			}).catch(function(error){next(error);});
+				}
+				*/
+
+				res.render('quizzes/index.ejs',{quizzes:quizzes});
+
+			}).catch(function(error) {
+				next(error);
+			});
 	}
 	
 
