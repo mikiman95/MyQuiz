@@ -26,6 +26,7 @@ module.exports = function(sequelize, DataTypes) {
             defaultValue: false
         }
       },
+      //THIS PARAGRAPH IS ADDED IN Tema 21: AUTHENTIFICATION 
       { instanceMethods: {
           verifyPassword: function (password) {
             return encryptPassword(password, this.salt) === this.password;

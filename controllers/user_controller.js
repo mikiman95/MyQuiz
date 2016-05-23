@@ -61,7 +61,7 @@ exports.create = function(req, res, next) {
                 return user.save({fields: ["username", "password", "salt"]})
                     .then(function(user) { // Renderizar pagina de usuarios
                         req.flash('success', 'Usuario creado con éxito.');
-                        res.redirect('/users');
+                        res.redirect('/session');//Redireccion a la pagina de login. //antes de Tema 21: "/users"
                     })
                     .catch(Sequelize.ValidationError, function(error) {
                         req.flash('error', 'Errores en el formulario:');
@@ -114,8 +114,17 @@ exports.update = function(req, res, next) {
 exports.destroy = function(req, res, next) {
     req.user.destroy()
         .then(function() {
+
+            //THIS BLOCK added in Tema 21:
+            //Borrando usuario logeado:
+            if(req.session.user && req.session.user.id===req.userr.id){
+                delete req.session.user; //borra la sesion
+            }
+
+
             req.flash('success', 'Usuario eliminado con éxito.');
-            res.redirect('/users');
+            //res.redirect('/users'); Antes del Tema 21 Authentification
+            res.redirect('/');
         })
         .catch(function(error){ 
             next(error); 
