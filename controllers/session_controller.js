@@ -60,7 +60,7 @@ exports.adminAndNotMyselfRequired = function(req, res, next){
     var userId       = req.user.id;
     var loggedUserId = req.session.user.id;
 
-    if (isAdmin || userId === loggedUserId) {
+    if (isAdmin && userId !== loggedUserId) {
         next();
     } else {
       console.log('Ruta prohibida: no es el usuario logeado, ni un administrador.');

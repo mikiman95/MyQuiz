@@ -5,6 +5,7 @@ var Sequelize = require("sequelize");
 
 
 exports.autoload =function(req,res,next,quizId){
+	
 	//models.Quiz.findById(quizId}) //alternativa previa: findOne() busca la primera
 		models.Quiz.findById(quizId,{include:[models.Comment]}) //the include helps in the views/quizzes/show.ejs
 		.then(function(quiz){
@@ -175,6 +176,30 @@ exports.destroy = function(req, res, next) {
       next(error);
     });
 };
+
+
+
+
+
+
+
+// MW que comprueba si el usuario autenticado es el propietario del quiz(quizAuthorId===loggedUserId)
+//o es admin (campo isAdmin de la tabla User es True
+exports.ownershipRequired = function(req, res, next){
+
+    var isAdmin      = req.session.user.isAdmin;
+    var quizAuthorId = req.quiz.AuthorId;
+    var loggedUserId = req.session.user.id;
+
+    if (isAdmin || quizAuthorId===loggedUserId) {
+        next();
+    } else {
+      console.log('Operación prohibida: el usuario logeado no es el autor del quiz, ni un administrador.');
+      res.send(403);    }
+};
+
+
+
 
 
 

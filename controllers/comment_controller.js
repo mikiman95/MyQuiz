@@ -5,10 +5,12 @@ var Sequelize = require("sequelize");
 
 
 exports.load =function(req,res,next,commentId){
+	console.log("Entered Autoload in commentController");
 	models.Comment.findById(commentId) //alternativa previa: findOne() busca la primera
 		.then(function(comment){
 			if(comment){
 				req.comment = comment;		//used for tema 24 accepting comments
+				console.log(" set req.comment = comment in Autoload in commentController");
 				next();
 			}else{
 				next(new Error("No Existe commentId="+commentId));
@@ -55,7 +57,7 @@ exports.create=function(req,res,next){
 };
 
 
-//Tema 24: Accept Comentarios:
+//Tema 24: Accept Comentarios: GET /quizzes/:quizId/comments/:commentId/accept
 exports.accept = function(req, res, next) {
 
   req.comment.accepted = true;
@@ -63,7 +65,7 @@ exports.accept = function(req, res, next) {
   req.comment.save(["accepted"])
     .then(function(comment) {
 	  req.flash('success', 'Commentario acceptado con éxito.');
-      res.redirect('/quizzes' + req.params.quizId); // Redirección HTTP a la pagina de dicho quiz.
+      res.redirect('/quizzes/' + req.params.quizId); // Redirección HTTP a la pagina de dicho quiz.
     })
     .catch(function(error) {
 

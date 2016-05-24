@@ -24,15 +24,19 @@
 					</td>
 
 					<% if(session.user){ %>
-						<td>
-							<a href="/quizzes/<%=quizzes[i].id %>/edit"><button>Editar</button></a>
-						</td>
-						<td>
-							<a href="/quizzes/<%=quizzes[i].id %>/?_method=DELETE"
-								onClick="return confirm('Estás seguro que quiers borrar:<%=quizzes[i].question%>');">
-								<button>Borrar</button>
-							</a>
-						</td>
+						<% if(session.user.isAdmin || session.user.id===quizzes[i].AuthorId){ %>		<!-- Añadido en tema 25: permisos: solo borras tus preguntas-->	
+
+									<td>
+										<a href="/quizzes/<%=quizzes[i].id %>/edit"><button>Editar</button></a>
+									</td>
+									<td>
+										<a href="/quizzes/<%=quizzes[i].id %>/?_method=DELETE"
+											onClick="return confirm('Estás seguro que quiers borrar:<%=quizzes[i].question%>');">
+											<button>Borrar</button>
+										</a>
+									</td>
+
+						<% } %>
 					<% } %>
 
 				</tr>
