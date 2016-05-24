@@ -8,6 +8,9 @@ module.exports=function(sequelize,DataTypes){
 								text:{
 									type: DataTypes.STRING,
 									validate: {notEmpty:{msg:"Falta Comentario"}}	
+								},
+								accepted:{type:DataTypes.BOOLEAN,
+									defaultValue: false
 								} 	
 							}
 

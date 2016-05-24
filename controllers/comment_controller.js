@@ -3,20 +3,19 @@ var Sequelize = require("sequelize");
 
 
 
-/*
-exports.autoload =function(req,res,next,quizId){
-	models.Quiz.findById(quizId) //alternativa previa: findOne() busca la primera
-		.then(function(quiz){
-			if(quiz){
-				req.quiz = quiz;
+
+exports.load =function(req,res,next,commentId){
+	models.Comment.findById(commentId) //alternativa previa: findOne() busca la primera
+		.then(function(comment){
+			if(comment){
+				req.comment = comment;		//used for tema 24 accepting comments
 				next();
 			}else{
-				next(new Error("No Existe quizId="+quizId));
+				next(new Error("No Existe commentId="+commentId));
 			}
 		}).catch(function(error){next(error);});
 };
 
-*/
 
 
 
@@ -54,6 +53,27 @@ exports.create=function(req,res,next){
 		});
 
 };
+
+
+//Tema 24: Accept Comentarios:
+exports.accept = function(req, res, next) {
+
+  req.comment.accepted = true;
+
+  req.comment.save(["accepted"])
+    .then(function(comment) {
+	  req.flash('success', 'Commentario acceptado con éxito.');
+      res.redirect('/quizzes' + req.params.quizId); // Redirección HTTP a la pagina de dicho quiz.
+    })
+    .catch(function(error) {
+
+      req.flash('error', 'Error al acptar un comentario: '+ error.message);
+      next(error);
+    });
+};
+
+
+
 
 
 
