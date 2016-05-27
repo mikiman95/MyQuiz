@@ -5,6 +5,10 @@ var commentController = require('../controllers/comment_controller');
 var userController = require('../controllers/user_controller');	//tema 20
 var sessionController = require('../controllers/session_controller');//Tema 21: Autentificacion:
 
+//Tema 27: para subir imagenes a cloudinary con multer.
+var multer = require("multer");
+var upload = multer({dest:"./uploads/"});	//carpeta destino para copias locales.
+
 
 //AutoLoad:
 router.param("quizId",quizController.autoload);//AutoLoad: de rutas que usan :quizId
@@ -15,7 +19,7 @@ router.param("format",quizController.MyFormatMW);
 
 
 /*GET quizzes*/
-router.get("/quizzes",quizController.index);
+router.get("/quizzes", quizController.index);
 //Entrega 11:
 //router.get("/quizzes.:format?",quizController.MyFormatMW,quizController.index);
 
@@ -28,11 +32,11 @@ router.get("/quizzes",quizController.index);
 router.get("/quizzes/new",sessionController.loginRequired, quizController.new);
 
 //POST quizzes/create
-router.post("/quizzes", sessionController.loginRequired, quizController.create);
+router.post("/quizzes", sessionController.loginRequired, upload.single("image"), quizController.create);
 
 //Get edit quiz X    Tema 15: editar Preguntas
 router.get("/quizzes/:quizId(\\d+)/edit", sessionController.loginRequired,quizController.ownershipRequired, quizController.edit);
-router.put("/quizzes/:quizId(\\d+)",sessionController.loginRequired, quizController.ownershipRequired, quizController.update);
+router.put("/quizzes/:quizId(\\d+)",sessionController.loginRequired, quizController.ownershipRequired,upload.single("image"), quizController.update);
 
 /*GET quiz 23*/
 router.get("/quizzes/:quizId(\\d+)",quizController.show);

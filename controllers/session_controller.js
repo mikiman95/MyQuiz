@@ -3,6 +3,8 @@ var models = require('../models');
 var Sequelize = require('sequelize');
 var url = require('url');
 
+var autologoutTime=120000; //120000ms = 2min
+
 
 // Middleware: Se requiere hacer login.
 //
@@ -22,6 +24,9 @@ exports.loginRequired = function (req, res, next) {
         res.redirect('/session?redir=' + (req.param('redir') || req.url));
     }
 };
+
+
+
 
 // MW que permite gestionar solamente si el usuario logeado es admin.
 exports.adminRequired = function(req, res, next){
@@ -141,7 +146,40 @@ exports.create = function(req, res, next) {
 // DELETE /session   -- Destruir sesion 
 exports.destroy = function(req, res, next) {
 
-    delete req.session.user;
-    
-    res.redirect("/session"); // redirect a login
+    destroy(req,res,next);
+   
 };
+
+
+
+//Para usar en autologout y en delete. Extraido del metodo exports.destroy para cumplir con DRY.
+function destroy(req,res,next){
+    delete req.session.user;
+    res.redirect("/session"); // redirect a login
+}
+
+
+
+/*
+    Al final nunca uso esto porque lo llamo desde app.js-> use(funcition()).....  en vez de desde router/index.js-> sessionController.aoutoload. 
+*/
+exports.autologout=function(req,res,next){
+    if(!req.session.user){next();}  //si usuario no esta logeado, salta al proximo middleware sin hacernada.
+    else{
+        var nextLogoutTime = req.session.user.nextLogoutTime || Date.now()+autologoutTime;  //anoto el valor almacenado o ahora mismo si no existia
+        var now = Date.now(); //numero de ms since 1970.
+
+         //console.log("nextLogoutTime: "  +nextLogoutTime+", now: "+now+", now-nextLogoutTime:"+(now-nextLogoutTime) );
+
+        if((now-nextLogoutTime)>0){     //si presente > nextLogoutTime, desconectate.
+            console.log("autologout");
+            destroy(req,res,next);
+            //next isnt required after destroy because it is a redirect.
+        }
+        else{
+             req.session.user.nextLogoutTime=now+autologoutTime; //120000ms= 2 min  
+             console.log("autologout in "+autologoutTime/1000+"s.");
+             next();
+        }
+    }
+}

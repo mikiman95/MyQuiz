@@ -1,5 +1,12 @@
 var models = require("../models");
 var Sequelize = require("sequelize");
+//Tema 27 Cloudinary Attachment
+var cloudinary = require('cloudinary');
+var fs = require('fs');
+// Opciones para imagenes subidas a Cloudinary
+var cloudinary_image_options = { crop: 'limit', width: 200, height: 200, radius: 5, 
+                                 border: "3px_solid_blue", tags: ['core', 'quiz-2016'] };
+
 
 
 
@@ -7,7 +14,7 @@ var Sequelize = require("sequelize");
 exports.autoload =function(req,res,next,quizId){
 	
 	//models.Quiz.findById(quizId}) //alternativa previa: findOne() busca la primera
-		models.Quiz.findById(quizId,{include:[models.Comment]}) //the include helps in the views/quizzes/show.ejs
+		models.Quiz.findById(quizId, { include: [ models.Comment, models.Attachment ] }) //the include helps in the views/quizzes/show.ejs
 		.then(function(quiz){
 			if(quiz){
 				req.quiz = quiz;
@@ -39,7 +46,7 @@ exports.index=function(req,res,next){
 	var search = req.query.search||"";
 	if(search!==""){
 		search= ModifyString(search); //url encoded creo.
-		models.Quiz.findAll({where:["question like ?",search],order:[["question","ASC"]]}) // o podría haber usado "DESC" para descendente
+		models.Quiz.findAll({include:[models.Attachment], where:["question like ?",search],order:[["question","ASC"]]}) // o podría haber usado "DESC" para descendente
 			.then(function(quizzes){
 				res.render('quizzes/index.ejs',{quizzes:quizzes});
 			}).catch(function(error){next(error);});

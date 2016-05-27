@@ -52,6 +52,35 @@ app.use(function(req,res,next){
 });
 
 
+//AUTOLOGOUT Entrega 12
+
+var autologoutTime=120000; //120000ms = 2min
+
+app.use(function(req,res,next){
+    if(!req.session.user){next();}  //si usuario no esta logeado, salta al proximo middleware sin hacernada.
+    else{
+        var nextLogoutTime = req.session.user.nextLogoutTime || Date.now()+autologoutTime;  //anoto el valor almacenado o ahora mismo si no existia
+        var now = Date.now(); //numero de ms since 1970.
+
+         //FOR Debuging: console.log("nextLogoutTime: "  +nextLogoutTime+", now: "+now+", now-nextLogoutTime:"+(now-nextLogoutTime) );
+
+        if((now-nextLogoutTime)>0){     //si presente > nextLogoutTime, desconectate.
+            console.log("Auto-logged out");
+            delete req.session.user;
+            res.redirect("/session"); // redirect a login
+            //next isnt required after destroy because it is a redirect.
+        }
+        else{
+             req.session.user.nextLogoutTime=now+autologoutTime; //120000ms= 2 min  
+             console.log("Autologout in "+autologoutTime/1000+"s.");
+             next();
+        }
+    }
+
+});
+
+
+
 
 app.use('/', routes);
 //app.use('/users', users);
