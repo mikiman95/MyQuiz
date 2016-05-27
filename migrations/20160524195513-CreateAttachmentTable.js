@@ -12,27 +12,27 @@ module.exports = {
                 },
                 QuizId: { 
                     type: Sequelize.INTEGER,
-                    allowNull=false
+                    allowNull:false
                 },
                 
                 public_id: { 
                     type: Sequelize.STRING,
-                    allowNull=false
+                    allowNull:false
                 },
 
                 url: { 
                     type: Sequelize.STRING,
-                    allowNull=false
+                    allowNull:false
                 },
                 
                 filename: { 
                     type: Sequelize.STRING,
-                    allowNull=false
+                    allowNull:false
                 },
 
                 mime: { 
                     type: Sequelize.STRING,
-                    allowNull=false
+                    allowNull:false
                 },
 
                 createdAt: { type: Sequelize.DATE,

@@ -1,11 +1,9 @@
 
-
-		
         <p>
         	Edite la pregunta
         </p>
   		<p>
-  			<form method ="post" action="/quizzes/<%=quiz.id%>?_method=PUT">
+  			<form method ="post" action="/quizzes/<%=quiz.id%>?_method=PUT" enctype="multipoart/form-data">
   				<%include _form.ejs%>
   			</form>
   		</p>

@@ -103,6 +103,57 @@ exports.new=function(req,res,next){
 
 //POST /quizzes/create
 exports.create=function(req,res,next){
+	//Despues de Tema 27
+
+	var authorId = req.session.user && req.session.user.id || 0;
+
+	var quiz = models.Quiz.build(
+		{
+			question:req.body.quiz.question,
+			answer:req.body.quiz.answer,
+			AuthorId: authorId
+		}
+	);
+
+	//Guardarlo en la Base de Datos;
+	//models.Quiz.create(quiz) Errata
+	quiz.save({fields:["question","answer","AuthorId"]})
+	.then(function(quiz){
+		req.flash("success","Pregunta y Respuesta guardadas con éxito.");
+		if(!req.file){
+			req.flash("info", "Es un quiz sin imagen.");
+			return; //Sale de promesa y salta al res.redirect("/quizzes")
+		}
+
+		//Guarda la imagen en Cloudinary
+		return uploadResourceToCloudinary(req)
+				.then(function(uploadResult){
+					//crear nuevo attachment en la BBDD
+					return createAttachment(req,uploadResult,quiz);
+				});
+
+	})
+	.then(function(){
+		res.redirect("/quizzes");		//Si exito, servidor dice al cliente "Ahora pideme un get /quizzes"
+	})
+	.catch(Sequelize.ValidationError,function(error){
+			req.flash("error","Errores en el formulario:");
+
+			for(var i in error.errors){
+				req.flash("error",error.errors[i].value);
+			};
+			res.render("quizzes/new",{quiz:quiz});
+	})
+
+	.catch(function(error){
+		req.flash("error","Error al crear un Quiz: "+error.message);
+		next(error);
+	});
+
+
+
+	/*
+		PREVIO A TEMA 27
 	var authorId = req.session.user && req.session.user.id || 0;
 
 	var quiz = models.Quiz.build(
@@ -132,6 +183,7 @@ exports.create=function(req,res,next){
 			req.flash("error","Error al crear un Quiz: "+error.message);
 			next(error);
 		});
+	*/
 
 };
 
@@ -145,8 +197,54 @@ exports.edit=function(req,res,next){
 
 // PUT /quizzes/:id
 exports.update = function(req, res, next) {
-
   req.quiz.question = req.body.quiz.question;
+  req.quiz.answer   = req.body.quiz.answer;
+
+  req.quiz.save({fields: ["question", "answer"]})
+    .then(function(quiz) {
+
+		req.flash('success', 'Pregunta y respuesta editadas con éxito.');
+
+		//Sin imagen, Eliminar attachment e imagen viejos:
+		if(!req.file){
+			req.flash("info","Ahora tenemos un quiz sin imagen, hay que borrar la imagen antigua.");
+			if(quiz.Attachment){
+				cloudinary.api.delete_resources(quiz.Attachment.public_id);
+				return quiz.Attachment.destroy();
+			}
+			return;
+		}
+
+		//Guardar la imagen nuevva en Cloudinay:
+		return uploadResourceToCloudinary(req)
+		.then(function(uploadResult){
+			//actualizar el attachment en la BBDD
+			return updateAttachment(req,uploadResult,quiz);
+		});
+
+    })
+    .then(function(){
+    	res.redirect('/quizzes'); // Redirección HTTP a lista de preguntas.
+    })
+    .catch(Sequelize.ValidationError, function(error) {
+
+      req.flash('error', 'Errores en el formulario:');
+      for (var i in error.errors) {
+          req.flash('error', error.errors[i].value);
+      };
+
+      res.render('quizzes/edit', {quiz: req.quiz});
+    })
+    .catch(function(error) {
+	  req.flash('error', 'Error al editar el Quiz: '+error.message);
+      next(error);
+    });
+
+
+
+  /*
+	PREVIO A TEMA 27:
+	req.quiz.question = req.body.quiz.question;
   req.quiz.answer   = req.body.quiz.answer;
 
   req.quiz.save({fields: ["question", "answer"]})
@@ -167,12 +265,19 @@ exports.update = function(req, res, next) {
 	  req.flash('error', 'Error al editar el Quiz: '+error.message);
       next(error);
     });
+  */
 };
 
 
 //Tema 16: borrar pregunta:
 // DELETE /quizzes/:id
 exports.destroy = function(req, res, next) {
+
+	//Borrar la image de Cloudinary (ignoro resultado)
+	if(req.quiz.Attachment){
+		cloudinary.api.delete_resources(req.quiz.Attachment.public_id);
+	}
+
   req.quiz.destroy()
     .then( function() {
 	  req.flash('success', 'Quiz borrado con éxito.');
@@ -245,3 +350,81 @@ ModifyString=function(string){
 	console.log("search despues: ZZZ"+string+"ZZZ");
 	return string;
 }
+
+
+//TEMA 27 Upload image to Cloudinary
+function uploadResourceToCloudinary(req){
+	return new Promise(function(resolve,reject){
+		var path = req.file.path;
+		cloudinary.uploader.upload(path,function(result){
+			fs.unlink(path); //Borra la imagen subida a ./uploads
+			if(!result.error){
+				resolve({public_id:result.public_id,url:result.secure_url});
+			}else{
+				req.flash("error","No se ha podido guardar la nueva imagen:" + result.error.message);
+				resolve(null);
+			}
+
+		  },
+		  cloudinary_image_options
+		);
+	})
+}
+
+function createAttachment(req,uploadResult){
+	if(!uploadResult){
+		return Promise.resolve();
+	}
+
+	return models.Attachment.create({
+								public_id:uploadResult.public_id,
+								url: uploadResult.url,
+								filename: req.file.originalname,
+								mime:req.file.mimetype,
+								QuizId: quiz.id
+
+							})
+	.then(function(attachment){
+		req.flash("success","Imagen nueva guardada con éxito");
+	})
+	.catch(function(error){//ignoro errores de validacion en imagenes.
+		req.flash("error","No se ha podido guardar la imagen nueva: "+error.message);
+		cloudinary.api.delete_resources(uploadResult.public_id);
+	});
+}
+
+
+
+
+function updateAttachment(req,uploadResult,quiz){
+	if(!uploadResult){
+		return Promise.resolve();
+	}
+	//Recordar public_id de la imagen antigua
+	var old_public_id = quiz.Attachment? quiz.Attachment.public_id : null;		//like in C, if A? then B, else C.  a?b:c
+
+	return quiz.getAttachment()
+	.then(function(attachment){
+		if(!attachment){
+			attachment = models.Attachment.build({QuizId:quiz.Id});
+		}
+
+		attachment.public_id=uploadResult.public_id;
+		attachment.url= uploadResult.url;
+		attachment.filename= req.file.originalname;
+		attachment.mime=req.file.mimetype;
+		return attachment.save();
+
+	})
+	.then(function(attachment){
+		req.flash("success","Imagen nueva actualizada con éxito");
+		if(old_public_id){
+			cloudinary.api.delete_resources(old_public_id);
+		}
+	})
+	.catch(function(error){
+		req.flash("error","No se ha podido guardar la imagen nueva: "+error.message);
+		cloudinary.api.delete_resources(uploadResult.public_id);
+	});
+}
+
