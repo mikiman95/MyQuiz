@@ -14,7 +14,9 @@ var Promise = require("promise");
 exports.autoload =function(req,res,next,quizId){
 	
 	//models.Quiz.findById(quizId}) //alternativa previa: findOne() busca la primera
-		models.Quiz.findById(quizId, { include: [ models.Comment, models.Attachment ] }) //the include helps in the views/quizzes/show.ejs
+		//models.Quiz.findById(quizId, { include: [ models.Comment, models.Attachment ] }) //the include helps in the views/quizzes/show.ejs
+		
+models.Quiz.findById(quizId, {include: [{model:models.Attachment}, {model:models.Comment, include:[{model:models.User, as:'Author'}]}]})
 		.then(function(quiz){
 			if(quiz){
 				req.quiz = quiz;

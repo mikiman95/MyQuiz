@@ -17,8 +17,8 @@ module.exports = {
            salt:     'aaaa',
            isAdmin: true,
            createdAt: new Date(), updatedAt: new Date() },
-         { username: 'Miki_User',  
-           password: encryptPassword('5678', 'bbbb'),
+         { username: 'test',  
+           password: encryptPassword('test', 'bbbb'),
            salt:     'bbbb',
            createdAt: new Date(), updatedAt: new Date() }
         ]);

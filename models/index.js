@@ -65,6 +65,11 @@ User.hasMany(Quiz,{foreignKey:"AuthorId"});
 Quiz.belongsTo(User,{as:"Author",foreignKey:"AuthorId"});
 
 
+//Entrega 13: AuthorId Of Comments: 1-N User-Comment
+User.hasMany(Comment,{foreignKey:"AuthorId"});
+Comment.belongsTo(User,{as:"Author",foreignKey:"AuthorId"});		//acceso: comment.Author.username muestra el username del usuario que escribio quiz.
+
+
 //Tema 27: Tabla de Attachment
 var Attachment = sequelize.import(path.join(__dirname,"attachment"));
 Attachment.belongsTo(Quiz);
@@ -73,6 +78,7 @@ Quiz.hasOne(Attachment);
 //Exporta definicion de tabla User
 exports.User =User; 
 exports.Attachment=Attachment;
+
 
 
 
