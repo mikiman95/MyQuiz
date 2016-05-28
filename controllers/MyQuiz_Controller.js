@@ -6,7 +6,7 @@ var fs = require('fs');
 // Opciones para imagenes subidas a Cloudinary
 var cloudinary_image_options = { crop: 'limit', width: 200, height: 200, radius: 5, 
                                  border: "3px_solid_blue", tags: ['core', 'quiz-2016'] };
-
+var Promise = require("promise");
 
 
 
@@ -39,40 +39,44 @@ exports.MyFormatMW=function(req,res,next,format){
 
 
 
+
+
+//Usando DRY
+
 //GET  /quizes?search=texto_a_buscar   con el query opcional
 exports.index=function(req,res,next){
 	console.log("Entering get index");
 
+
+	//Documentacion: http://docs.sequelizejs.com/en/latest/api/model/#findalloptions-promisearrayinstance
+	var options ={};
+	options.include = [models.Attachment];
+
+	//Busqueda de Quizzes
 	var search = req.query.search||"";
 	if(search!==""){
 		search= ModifyString(search); //url encoded creo.
-		models.Quiz.findAll({include:[models.Attachment], where:["question like ?",search],order:[["question","ASC"]]}) // o podría haber usado "DESC" para descendente
-			.then(function(quizzes){
-				res.render('quizzes/index.ejs',{quizzes:quizzes});
-			}).catch(function(error){next(error);});
-	}else{
-		models.Quiz.findAll()
-			.then(function(quizzes){
-				/*
-				if(req.format){
-					console.log("Should have Rendered JSON format");
-				
-					res.render('quizzes/index.ejs',{format:req.format,quizzes:quizzes});
 
-				}else{
-					res.render('quizzes/index.ejs',{quizzes:quizzes});
-				}
-				*/
-
-				res.render('quizzes/index.ejs',{quizzes:quizzes});
-
-			}).catch(function(error) {
-				next(error);
-			});
+		options.where=["question like ?",search];
+		options.order = [["question","ASC"]];
+		
 	}
+	models.Quiz.findAll(options)
+	.then(function(quizzes){
+			res.render('quizzes/index.ejs',{quizzes:quizzes});
+
+	})
+	.catch(function(error) {
+			next(error);
+	});
+}
 	
 
-};
+
+
+
+
+
 
 
 
@@ -353,25 +357,36 @@ ModifyString=function(string){
 
 
 //TEMA 27 Upload image to Cloudinary
-function uploadResourceToCloudinary(req){
-	return new Promise(function(resolve,reject){
-		var path = req.file.path;
-		cloudinary.uploader.upload(path,function(result){
-			fs.unlink(path); //Borra la imagen subida a ./uploads
-			if(!result.error){
-				resolve({public_id:result.public_id,url:result.secure_url});
-			}else{
-				req.flash("error","No se ha podido guardar la nueva imagen:" + result.error.message);
-				resolve(null);
-			}
 
-		  },
-		  cloudinary_image_options
-		);
-	})
+/**
+ * Crea una promesa para subir una imagen nueva a Cloudinary. 
+ * Tambien borra la imagen original.
+ * 
+ * Si puede subir la imagen la promesa se satisface y devuelve el public_id y 
+ * la url del recurso subido. 
+ * Si no puede subir la imagen, la promesa tambien se cumple pero devuelve null.
+ *
+ * @return Devuelve una Promesa. 
+ */
+function uploadResourceToCloudinary(req) {
+    return new Promise(function(resolve,reject) {
+        var path = req.file.path;
+        cloudinary.uploader.upload(path, function(result) {
+                fs.unlink(path); // borrar la imagen subida a ./uploads
+                if (! result.error) {
+                    resolve({ public_id: result.public_id, url: result.secure_url });
+                } else {
+                    req.flash('error', 'No se ha podido guardar la nueva imagen: '+result.error.message);
+                    resolve(null);
+                }
+            },
+            cloudinary_image_options
+        );
+    })
 }
 
-function createAttachment(req,uploadResult){
+
+function createAttachment(req,uploadResult,quiz){
 	if(!uploadResult){
 		return Promise.resolve();
 	}
@@ -428,3 +443,58 @@ function updateAttachment(req,uploadResult,quiz){
 	});
 }
 
+
+
+
+
+
+/* OLD INDEX: Por si lo necesito:
+
+
+//GET  /quizes?search=texto_a_buscar   con el query opcional
+exports.index=function(req,res,next){
+	console.log("Entering get index");
+	var options ={};
+	options.include = [models.Attachment];
+
+	var search = req.query.search||"";
+	if(search!==""){
+		search= ModifyString(search); //url encoded creo.
+
+		options.where=["question like ?",search];
+		options.order = [["question","ASC"]];
+		
+
+		//models.Quiz.findAll({include:[models.Attachment], where:["question like ?",search],order:[["question","ASC"]]}) // o podría haber usado "DESC" para descendente
+		models.Quiz.findAll(options)		
+			.then(function(quizzes){
+				res.render('quizzes/index.ejs',{quizzes:quizzes});
+			}).catch(function(error){next(error);});
+	}else{
+		models.Quiz.findAll(options)
+			.then(function(quizzes){
+				
+			//	if(req.format){
+			//		console.log("Should have Rendered JSON format");
+				
+			//		res.render('quizzes/index.ejs',{format:req.format,quizzes:quizzes});
+
+			//	}else{
+			//		res.render('quizzes/index.ejs',{quizzes:quizzes});
+			//	}
+				
+
+				res.render('quizzes/index.ejs',{quizzes:quizzes});
+
+			}).catch(function(error) {
+				next(error);
+			});
+	}
+	
+
+};
+
+
+
+
+*/
