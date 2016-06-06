@@ -20,6 +20,10 @@ module.exports = {
          { username: 'test',  
            password: encryptPassword('test', 'bbbb'),
            salt:     'bbbb',
+           createdAt: new Date(), updatedAt: new Date() },
+         { username: 'test2',  
+           password: encryptPassword('test2', 'cccc'),
+           salt:     'cccc',
            createdAt: new Date(), updatedAt: new Date() }
         ]);
   },

@@ -9,9 +9,8 @@ module.exports = {
          { question: 'Capital de España', answer: 'Madrid',
            createdAt: new Date(), updatedAt: new Date() },
          { question: 'Mi Edad', answer: '20',
-           createdAt: new Date(), updatedAt: new Date() },
-         { question: 'y uno y dos', answer: 'y tres',
-           createdAt: new Date(), updatedAt: new Date() },
+           createdAt: new Date(), updatedAt: new Date() }
+         
         ]);
   },
 

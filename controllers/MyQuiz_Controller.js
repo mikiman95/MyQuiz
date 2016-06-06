@@ -52,7 +52,17 @@ exports.index=function(req,res,next){
 
 	//Documentacion: http://docs.sequelizejs.com/en/latest/api/model/#findalloptions-promisearrayinstance
 	var options ={};
-	options.include = [models.Attachment];
+
+	//Entrega 11 Formato, no dice nada de Attachments
+	if(req.format){
+		options.attributes =["id","question","answer"];   //http://stackoverflow.com/questions/8039932/specifying-specific-fields-with-sequelize-nodejs-instead-of
+		//options.include = [{model: models.Attachment,attributes:["id","filename","mime"],where:{id:{ne:null}}}];
+		
+	}else{
+		options.include = [models.Attachment];
+	}
+	 
+
 
 	//Busqueda de Quizzes
 	var search = req.query.search||"";
@@ -63,8 +73,18 @@ exports.index=function(req,res,next){
 		options.order = [["question","ASC"]];
 		
 	}
+	
+
 	models.Quiz.findAll(options)
 	.then(function(quizzes){
+
+			//Entrega 11: Formato: Ver views/index para el caso de formato ==="json"
+			if(req.format){
+				//console.log("Should have a format");
+				quizzes.format=req.format;
+			}
+				
+
 			res.render('quizzes/index.ejs',{quizzes:quizzes});
 
 	})
@@ -85,7 +105,14 @@ exports.index=function(req,res,next){
 //GET /quizzes/:id
 exports.show=function(req,res,next){
 	var answer=req.query.answer||'';
-	res.render('quizzes/show',{quiz:req.quiz,answer:answer});
+	//Entrega 11: Formato: Ver views/quizzes/show  para el caso de formato ==="json"
+
+	var quiz = req.quiz;
+	if(req.format==="json"){
+		quiz.format = req.format;
+	} 
+
+	res.render('quizzes/show',{quiz:quiz,answer:answer});
 		
 
 };

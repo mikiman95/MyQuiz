@@ -19,9 +19,10 @@ router.param("format",quizController.MyFormatMW);
 
 
 /*GET quizzes*/
-router.get("/quizzes", quizController.index);
+//router.get("/quizzes", quizController.index);
 //Entrega 11:
 //router.get("/quizzes.:format?",quizController.MyFormatMW,quizController.index);
+router.get("/quizzes.:format?",quizController.index);
 
 
 
@@ -39,7 +40,7 @@ router.get("/quizzes/:quizId(\\d+)/edit", sessionController.loginRequired,quizCo
 router.put("/quizzes/:quizId(\\d+)",sessionController.loginRequired, quizController.ownershipRequired,upload.single("image"), quizController.update);
 
 /*GET quiz 23*/
-router.get("/quizzes/:quizId(\\d+)",quizController.show);
+router.get('/quizzes/:quizId(\\d+).:format?',quizController.show);
 
 /*GET Check del quiz 23*/
 router.get("/quizzes/:quizId(\\d+)/check",quizController.check);
@@ -85,10 +86,6 @@ router.delete('/users/:userId(\\d+)',   sessionController.loginRequired,sessionC
 router.get('/session',    sessionController.new);     // formulario login
 router.post('/session',   sessionController.create);  // crear sesión
 router.delete('/session', sessionController.destroy); // destruir sesión
-
-
-
-
 
 
 
