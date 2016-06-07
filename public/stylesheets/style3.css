@@ -204,6 +204,7 @@ nav a {margin:0px 10px 0px 0px;}
 
 #flashinfo,#flashsuccess,#flasherror{
 	margin: 2% auto;
+    background-color: white;
 	color:white;
     padding: 7px;
     padding-bottom: 0;
@@ -220,6 +221,7 @@ nav a {margin:0px 10px 0px 0px;}
     background-color: #f0f0f0; 
     border: 2px solid rgb(179, 0, 89);
 }
+
 
 
 #flashsuccess ul li,#flasherror ul li,#flashinfo ul li {
