@@ -4,6 +4,7 @@ var quizController= require('../controllers/MyQuiz_Controller');
 var commentController = require('../controllers/comment_controller');
 var userController = require('../controllers/user_controller');	//tema 20
 var sessionController = require('../controllers/session_controller');//Tema 21: Autentificacion:
+var starioWarsController= require("../controllers/StarioWars_controller");
 
 //Tema 27: para subir imagenes a cloudinary con multer.
 var multer = require("multer");
@@ -56,6 +57,11 @@ router.get("/author",function(req,res,next){
 router.get('/', function(req, res, next) {
   res.render('index');
 });
+/* GET StarioWars */
+router.get('/starioWars', function(req, res, next) {
+  res.render('StarioWars');
+});
+//router.get("/starioWars",starioWarsController.index);
 
 
 //Tema 16 Borrar Quiz
