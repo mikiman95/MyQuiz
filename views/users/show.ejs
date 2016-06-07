@@ -4,15 +4,16 @@
 <p>
   <b>Username:</b>
   <%= user.username %>
-</p>
+  <br/>
 
-<p>
+
   <b>Es Administrador:</b>
   <%= user.isAdmin ? "Si" : "No" %>
-</p>
+  <br/>
+
 
 <% if (session.user) { %>
-  <p>
+  
     <% if (session.user.isAdmin || session.user.id === user.id) { %>
       <a href="/users/<%= user.id %>/edit"> 
         <button type="button"> Editar </button>
@@ -21,15 +22,16 @@
 
     <% if (session.user.isAdmin && session.user.id !== user.id) { %>
       <a href="/users/<%= user.id %>?_method=DELETE"> 
-        <button type="button"
+        <button type="button" class="button"
               onClick="return confirm('Borrar cuenta: <%= user.username %>');">
           Borrar 
         </button>
       </a>
     <% } %>
-  </p>
+
 <% } %>
+</p>
 
 <a href="/users"> 
-   <button type="button">Volver</button>
+   <button type="button" class="button">Volver</button>
 </a>

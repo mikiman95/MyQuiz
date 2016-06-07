@@ -3,10 +3,11 @@
 		<%return JSON.stringify(quiz);%>
 
 <%} else { %>
-			<p>
-			    <form method="get" action="/quizzes/<%=quiz.id%>/check">
-			    	<p>Pregunta: <%=quiz.question%></p>
-
+			
+			<form method="get" action="/quizzes/<%=quiz.id%>/check">
+			    <div class="main">
+			    	<strong>Pregunta:</strong> <%=quiz.question%>
+					<br>
 
 					<% if(quiz.Attachment){ %>
 						<img src="<%= quiz.Attachment.url%>" />
@@ -16,21 +17,28 @@
 
 					<br>
 
-			    	<input type="text" name="answer" value="<%=answer%>" placeholder="Responda aquí">
-			    	<input type="submit" value="Comprobar">
-			    </form>
-			</p>
+			    	<input type="text" name="answer" value="<%=answer%>"  class="formText" placeholder="Responda aquí">
+
+			    	<br />
+			    	<input type="submit"  class="submitStyle" value="Comprobar">
+
+			    	
+				</div>
+			    	
+			</form>
+			
 
 					
-			<% if(session.user){ %>
-				<p>
-					<a href="/quizzes/<%= quiz.id %>/comments/new"><button>Nuevo Comentrio</button></a>
-				</p>
-			<% } %>
+				
 									
 
-			<p><strong>Comentarios:</strong></p>
-			<p>
+			 <div class="main">
+				<strong>Comentarios:</strong>
+				<br/>
+				<% if(session.user){ %>	
+						<a href="/quizzes/<%= quiz.id %>/comments/new"><button class="button">Nuevo Comentario</button></a>
+				<% } %>
+			
 				<ul>
 
 					<% for(var i in quiz.Comments){                <!--This quiz.Comments is thanks to the {include:[models.Comment]} in quizcontroller.js autoload. -->
@@ -42,10 +50,11 @@
 					<%  }else if(session.user && 
 								(session.user.isAdmin || (quiz.AuthorId===session.user.id))){ %>
 							
-							<li> <%=comment.Author.username +': \"'+ comment.text +'\"' %>  </li>
+							<li> <%=comment.Author.username +': \"'+ comment.text +'\"' %> <br/> </li>
+							
 
 							<a href="/quizzes/<%= quiz.id %>/comments/<%= comment.id%>/accept?_method=PUT">
-								<button>Aceptar</button>
+								<button class="button">Aceptar</button>
 							</a>
 
 						<% } %>
@@ -53,5 +62,5 @@
 
 
 				</ul>
-			</p>
+			</div>
 <% } %>

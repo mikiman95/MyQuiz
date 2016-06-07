@@ -22,7 +22,7 @@
 <div>
 	<% if ( ! user.id) { %>
 		<label for="preg" class="rem">Username:</label>
-		<input type="text" id="username" name="user[username]" value="<%= user.username %>"/><p>
+		<input type="text" id="username" name="user[username]" class="formText" value="<%= user.username %>"/><p>
 	<% } else { %>
 		Username: <%= user.username %>
 	<% } %>
@@ -30,12 +30,12 @@
 
 <div>
 	<label for="user_password" class="rem">Password:</label>
-	<input type="password" id="user_password" name="user[password]"/> <p>
+	<input type="password" id="user_password" name="user[password]"  class="formText"/> <p>
 </div>
 
 <div>
 	<label for="user_confirm_password" class="rem">Confirmar Password::</label>
-	<input type="password" id="user_confirm_password" /> <p>
+	<input type="password" id="user_confirm_password"  class="formText"/> <p>
 </div>
 
 
@@ -44,5 +44,5 @@
 </div>
 
 <div>
-	<input type="submit" value="Guardar" onclick="return confirmPassword()">
+	<input type="submit" value="Guardar" class="submitClass" onclick="return confirmPassword()">
 </div>

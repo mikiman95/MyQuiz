@@ -5,9 +5,12 @@
     <meta charset="UTF-8">
     <link rel='shortcut icon' href='/images/favicon.ico' type='image/x-icon'/>
 
-     <link rel='stylesheet' href='/stylesheets/style.css' />
-      <link rel='stylesheet' type="text/css" media="only screen and (min-width: 800px) and (min-device-width: 600px)" href='/stylesheets/wide.css' />
-      <link rel='stylesheet' type="text/css" media="only screen and (max-width: 480px)" href='/stylesheets/smartphone.css' />
+    <link rel='stylesheet' href='/stylesheets/style3.css' />
+    <link rel='stylesheet' type="text/css" media="only screen and (min-width: 800px) and (min-device-width: 600px)" href='/stylesheets/wide2.css' />
+    <link rel='stylesheet' type="text/css" media="only screen and (max-width: 480px)" href='/stylesheets/smartphone2.css' />
+    
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"></script> <!-- For jQuery Nav control: https://webdesignerhut.com/active-class-navigation-menu/-->
+ 
   </head>  
 
 
@@ -30,18 +33,37 @@
             <h1>Quiz<span class="no-narrow">: el juego de las preguntas</span></h1>
         </header> 
 
-        <nav class="main" role="navigation">
+
+<!--Used in style.css
+        <nav class="nav" role="navigation">
+
           <a href="/">Inicio</a>
           <a href="/quizzes">Preguntas</a>
           <a href="/author">Author</a>
           <a href="/users">Usuarios</a>
+           <% switch(path){
+              case "/quizzes": %> 
+               <a clase="active" href="/quizzes">Preguntas</a>
+              <% break;%>
+          <%}%>
           
         </nav>
+-->
+
+<nav class="nav" id="nav" role="navigation">
+    <ul>
+         <li><a href="/">Inicio</a></li>
+         <li><a href="/quizzes">Preguntas</a></li>
+         <li><a href="/author">Author</a></li>
+         <li><a href="/users">Usuarios</a></li>
+        
+    </ul>
+</nav>
 
 
 
 
-
+      <%if (messages.info||messages.success||messages.error){%>
 
         <!--Flash Messages-->
         <section class="main">
@@ -83,27 +105,13 @@
           <% } %>
 
         </section>  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    <% } %>
 
 
 
 
         <section class="main">
-            <div><%-body%></div>
+            <%-body%>
         </section>
 
         <footer class="main">

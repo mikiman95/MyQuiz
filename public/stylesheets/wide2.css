@@ -1,0 +1,9 @@
+
+#page:after{content: "Wide Layout";}    /*     This can be used, but isnt recomended*/
+
+
+nav{float:left; width:20%;}
+section{float:right;width: 76%}
+footer{clear:both;}
+
+nav a {display: block;text-align: left;}

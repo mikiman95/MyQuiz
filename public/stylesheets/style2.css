@@ -1,0 +1,146 @@
+@font-face {
+font-family: KaushanScript-Regular;
+src: url("/fonts/KaushanScript-Regular.otf") format("opentype");
+}
+
+
+body {
+  background-color: black;
+  font-family: Verdana;
+  background-image: url("/images/Swirl.jpg"); 
+}
+h1{
+    color: #9900ff;
+    text-align: center;
+    font-family: KaushanScript-Regular, Helvetica, Verdana, Sans-Serif;
+    font-size: 80px;
+}
+p, #CalculatorButtonPad{
+    border: 1px solid #54edf4;
+    padding: 10px;
+	color: #76f9ff;
+    background-color:rgba(107,26,85,0.5);
+    margin:10px;
+}
+a{
+	color: white;
+}
+
+nav{
+    
+    padding: 5px;
+	background-color:rgba(1,107,110,0.7);
+    border: 1px solid #54edf4;
+    color: #f6d4cc;
+    font-family: KaushanScript-Regular, Helvetica, Verdana, Sans-Serif;
+    font-size: 40px;
+    
+}
+
+li a:hover:not(.active) {
+    background-color: #cd3277;
+    border: 1px solid #54edf4;
+}
+
+.active {
+    background-color: rgba(107,26,85,1);
+    border: 1px solid #54edf4;
+    
+
+}
+
+
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: rgba(87,209,220,0.4);;
+}
+
+li {
+    float: left;
+    border: 1px black;
+}
+
+li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+
+
+
+
+footer{
+	color: white;
+
+}
+.footer_center{
+	margin: auto;
+    width: 60%;
+    float: center;
+    border: 1px solid #54edf4;
+    padding: 10px;
+    background-color:rgb(1,107,110);
+}
+
+#fecha{
+    margin: auto;
+    width: 40%;
+    float: center;
+    border: 1px solid #54edf4;
+    padding: 10px;
+    text-align: center;
+}
+
+
+table,#tabla {
+
+    margin: auto;
+    margin-top: 40px;
+    margin-bottom: 40px;
+    width:20%;
+    float:center;
+	
+	border-spacing: 0px;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 0.8em;
+	border-top-width: 1px;
+	border-top-style: solid;
+	border-top-color:  #54edf4;
+
+    border-right-width: 1px;
+    border-right-style: solid;
+    border-right-color:  #54edf4;
+
+    border-left-width: 1px;
+    border-left-style: solid;
+    border-left-color:  #54edf4;
+
+
+}
+
+#table{
+    width:40%;
+}
+th, td {
+	padding: 0.5em;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	border-bottom-color: #54edf4;
+
+}
+th {
+	background-color: rgba(255,88,237,1);
+    color: black;
+}
+td {
+	background-color: rgba(21,58,67,0.8);
+    color: #f6d4cc;
+}
+
+

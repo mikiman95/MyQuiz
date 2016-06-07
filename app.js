@@ -47,7 +47,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 //helper dinámico: 
 app.use(function(req,res,next){
   //hace visible req.session en las vistas view/layout.ejs
-  res.locals.session = req.session;     //res.locals.session lets me write:  if(session.user){...} in layout.
+  res.locals.session = req.session;     //res.locals.session lets me write:  if(session.user){...} in layout.ejs.
+  res.locals.path = req.path;           //used for stylesheet "ACTIVE Nav element in layout.ejs"
   next();
 });
 

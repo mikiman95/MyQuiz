@@ -19,30 +19,39 @@
 </script>
 
 
-<div>
+
 	<% if ( ! user.id) { %>
 		<label for="preg" class="rem">Username:</label>
-		<input type="text" id="username" name="user[username]" value="<%= user.username %>"/><p>
+      <br/>
+		<input type="text" id="username" name="user[username]"  class="formText" value="<%= user.username %>"/>
+      <br/>
+
 	<% } else { %>
 		Username: <%= user.username %>
 	<% } %>
-</div>
 
-<div>
+
+
 	<label for="user_password" class="rem">Password:</label>
-	<input type="password" id="user_password" name="user[password]"/> <p>
-</div>
+   <br/>
+	<input type="password" id="user_password" name="user[password]" class="formText"/> 
+   <br/>
 
-<div>
+
+
+
 	<label for="user_confirm_password" class="rem">Confirmar Password:</label>
-	<input type="password" id="user_confirm_password" /> <p>
-</div>
+   <br/>
+	<input type="password" id="user_confirm_password"  class="formText"/>
+   <br/>
+ 
 
 
-<div>
-	<a href="/"><button type="button">Cancelar</button></a>
-</div>
 
-<div>
-	<input type="submit" value="Guardar" onclick="return confirmPassword()">
-</div>
+
+	<a href="/"><button type="button" class="button">Cancelar</button></a>
+
+
+
+	<input type="submit"  class="submitStyle" value="Guardar" onclick="return confirmPassword()">
+
