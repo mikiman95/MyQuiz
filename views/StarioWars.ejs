@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>StarioWars</title>
+    <link rel="stylesheet" href="/stylesheets/starioStyle.css">
+    <script type="text/javascript" src="/paper/dist/paper-full.js"></script>
+    
+</head>
+
+
+<body>
+
+
+    <script type="text/paperscript" canvas="canvas">
+        var values = {
+            points: 4,
+
+            ShipFollowsMouse: 0,//1 means on, anything else is off
+            ShowDebugTexts:1,
+
+            layers: 2,
+            ShieldRadius: 15,
+            ShieldFi: 150,
+            ShieldOffsetFromCenter:100,
+            ShieldRotateSpeed:8,
+            ShieldTransparency:0.2,
+            AutoRotateShield:0, //1 means on, anything else is off
+
+            GunRadius:20 ,
+            GunFi: 90,
+            AutoRotateGun:0,
+
+            Score:0,
+            ForageStarsOnScreen:20,  //20
+            ForageStarMoveSpeedFactor:0.02,
+
+            DetailWhiteStarsOnScreen:25, //25
+            DetailStarMoveSpeedFactor:0.1,
+
+            FalconRadius: 50 
+        };
+        var ROLES = Object.freeze({
+            Pilot:{id:0,title:"Pilot"},
+            Gunner:{id:1,title:"Gunner"}, 
+            ShieldMaster:{id:2,title:"Shield Master"}, 
+            Forager:{id:3,title:"Energy Forager"}, 
+            Length:4
+        });
+
+        var Player =new function(){
+            Role: ROLES.Pilot;
+            return{
+                changeRole:function () {
+                    
+                    var newRole=0;
+                    switch(this.Role) {
+                         case ROLES.Pilot:   newRole=ROLES.Gunner; break;
+                         case ROLES.Gunner:   newRole=ROLES.ShieldMaster; break;
+                         case ROLES.ShieldMaster:   newRole=ROLES.Forager; break;
+                         case ROLES.Forager:   newRole=ROLES.Pilot; break;
+                         default:  newRole=ROLES.Pilot;
+                    }
+
+                    this.Role = newRole;
+                    text3.content ="Role: "+ this.getRoleTitle(this.Role);//this.Role;
+                },
+                getRoleTitle:function(data){
+                    for (var prop in data) {
+                      var propName = prop;
+                      var propVal = data[prop];
+                      if (propName=="title"){return propVal;}
+                    }
+                }    
+            };
+        };
+        
+
+      
+        
+        
+
+
+
+       
+      
+        /************************
+            ******Shield******
+        *************************/
+         var ShieldPath = new Path({
+            fillColor: "#00FF00",
+            strokeColor:'black',
+            closed: true
+        });
+         ShieldPath.fillColor.alpha = values.ShieldTransparency;
+
+         var FalconCenter= new Point(0,0);
+
+         var point0 = new Point({
+            length: 0,
+            angle: 0
+        });
+         var point1 = new Point({
+            length: values.FalconRadius + values.ShieldRadius,
+            angle: 0
+        });
+
+        var point2 = new Point({
+            length: values.FalconRadius + values.ShieldRadius,
+            //angle: -values.fi
+            angle: values.ShieldFi
+        });
+
+
+        ShieldPath.add(point0);
+        ShieldPath.add(FalconCenter + point1);
+        ShieldPath.arcTo(FalconCenter + point2);
+        ShieldPath.pivot = point0;
+
+
+      
+
+
+
+
+        
+
+        /************************
+            ******Falcon******
+        *************************/
+
+        var FalconOuterPath = new Path.RegularPolygon(new Point(0,0),10, values.FalconRadius);
+        FalconOuterPath.style = {
+            fillColor: "white",
+            strokeColor: 'black'
+        };
+
+        var FalconInnerPath = new Path.RegularPolygon(new Point(0,0),8, values.FalconRadius-5);
+        FalconInnerPath.style = {
+            fillColor: "#778899",
+            strokeColor: 'black'
+        };
+
+
+
+        /************************
+            ******Gun******
+        *************************/
+
+         //Rounded Rectangle
+        var rectValues ={TopX:values.FalconRadius*6,TopY:values.FalconRadius*0.3,Width:values.FalconRadius*0.25,Height:values.FalconRadius*1.5}
+
+
+        var rectangle = new Rectangle(
+            new Point(-rectValues.Width/2, -values.FalconRadius/8), 
+            new Point(+rectValues.Width/2,rectValues.Height)
+        );
+        var cornerSize = new Size(50, 10);
+
+        var GunPath = new Path.RoundRectangle(rectangle, cornerSize);
+        GunPath.fillColor = '#3d3d5c';
+        GunPath.strokeColor = "#ccf2ff";
+        GunPath.pivot = FalconCenter;
+
+
+
+
+         /*
+            var GunPath = new Path({
+            fillColor: "#000080",
+            strokeColor:'black',
+            closed: true
+        });
+
+         var GunPoint1 = new Point({
+            length: values.FalconRadius + values.GunRadius,
+            angle: 0
+        });
+
+
+
+        var GunPoint2 = new Point({
+            length: values.FalconRadius + values.GunRadius,
+            angle: values.GunFi/2
+        });
+        var GunPoint3 = new Point({
+            length: values.FalconRadius + values.GunRadius,
+            angle: values.GunFi
+        });
+
+
+
+        GunPath.add(FalconCenter);
+        GunPath.add(FalconCenter + GunPoint1);
+        GunPath.arcTo(FalconCenter + GunPoint2);
+        //GunPath.arcTo(FalconCenter + GunPoint2);
+
+         */
+        
+
+
+
+
+        var CompleteFalconGroup= new Group(FalconOuterPath,FalconInnerPath,GunPath,ShieldPath);
+        CompleteFalconGroup.position = FalconCenter;
+        CompleteFalconGroup.pivot= FalconCenter;
+
+
+     
+
+
+
+        function onFrame(event) {
+            //ShieldPath.rotate(1,FalconCenter);
+            //raster.rotate(1);
+           // GunPath.rotate(-1,FalconCenter);
+           if(values.AutoRotateShield==1){ShieldPath.rotate(1,FalconCenter);}
+           if(values.AutoRotateGun==1){GunPath.rotate(-1,FalconCenter);}
+           if(Player.Role==ROLES.Pilot){MoveStars();}            
+        }
+
+        function onMouseMove(event) {
+            drawFalcon();
+
+           
+            
+            mouseVector = getVector(view.center,event.point);
+            text.content = 'Mouse Angle [-180,180]: '+mouseVector.angle;
+           
+            var angle = (mouseVector.angle>0)?mouseVector.angle:(mouseVector.angle+=360); //si es negativo, sumale 360
+            text2.content = 'Mouse Angle [0,360]: '+(angle);
+
+            
+
+            
+            switch(Player.Role){
+                case ROLES.Pilot:
+                    if(values.ShipFollowsMouse==1){FalconCenter = event.point;}
+                break;
+                case ROLES.Gunner:
+                    angle =angle-GunPath.rotation-values.GunFi;
+                    GunPath.rotate(angle); 
+                break;
+                case ROLES.ShieldMaster: 
+                    angle =angle-ShieldPath.rotation-values.ShieldFi/2;
+                    ShieldPath.rotate(angle); 
+                break;
+            }
+           
+            
+            //text4.content = "Shield Rotation: "+ShieldPath.rotation;
+
+            
+        }
+
+
+        ShieldPath.transformContent = false; 
+        GunPath.transformContent = false; 
+
+
+        ShieldPath.onMouseMove=function(event){
+            //ShieldPath.rotation=event.point.angle;
+        }
+
+     
+
+
+
+        function onMouseDown(event){
+            FalconOuterPath.fillColor.hue +=15;
+            Player.changeRole();
+               
+            //these two lines quickfix Shield autorotate flying off into nowhere. but is not a good style of solution... Rethink this.
+            if(values.ShipFollowsMouse==1){
+                FalconCenter=event.point;
+                drawFalcon();
+            } 
+        
+        
+
+        }
+        function getVector(TailPoint,TipPoint){
+            var vector = TipPoint-TailPoint;
+            return vector;
+        }
+
+        function drawFalcon(){
+            if(Player.Role!==ROLES.Pilot){FalconCenter=view.center;}  //TODO REMOE THIS AND AVTICATE IN ON MOUSE MOVE
+            FalconOuterPath.position = FalconCenter;
+            FalconInnerPath.position = FalconCenter;
+            GunPath.position = FalconCenter;
+            ShieldPath.position = FalconCenter;
+            //CompleteFalconGroup.position = FalconCenter;
+            
+        }
+
+
+
+        function onKeyDown(event) {
+            
+            if(event.key == 'd') {
+                ShieldPath.rotate(+values.ShieldRotateSpeed);
+            }
+
+            if(event.key == 'a') {
+                ShieldPath.rotate(-values.ShieldRotateSpeed);
+            }
+
+            if(event.key == 'r') {
+                Player.changeRole();
+            }
+
+            if(event.key == 'q') {
+                GunPath.rotate(-values.ShieldRotateSpeed);
+            }
+
+            if(event.key == 'e') {
+                GunPath.rotate(+values.ShieldRotateSpeed);
+            }
+
+            if(event.key == 't') {
+               ToggleDebugText();
+            }
+            
+            
+        }
+
+
+        function ToggleDebugText(){
+            if (values.ShowDebugTexts==1){
+                values.ShowDebugTexts=0;
+                DebugTextLayer.opacity=0;
+            }else{
+                values.ShowDebugTexts=1;
+                DebugTextLayer.opacity=1;
+            }
+        }
+
+
+
+
+
+        /*
+          
+
+        // Create a decahedron shaped path 
+            var decahedron = new Path.RegularPolygon(new Point(200, 70), 10, 50);
+            decahedron.fillColor = '#e9e9ff';
+            decahedron.selected = false;
+
+
+            var path = new Path.Rectangle(new Point(80, 50), new Size(100, 50));
+            path.style = {
+                fillColor: 'white',
+                strokeColor: 'black'
+            };
+
+
+            // Create a copy of the path and set its stroke color to red:
+            var copy = path.clone();
+            copy.strokeColor = 'red';
+
+            // Save the bottom left position of the path's bounding box:
+            var point = copy.bounds.bottomLeft;
+
+         
+                function onFrame(event) {
+                // Each frame, rotate the path 3 degrees around the point
+                // we defined earlier:
+                copy.rotate(3, point);
+                
+            }
+
+         
+
+
+
+         project.activeLayer.insertChild(0, path);
+        */
+
+         drawFalcon();        //Place it in center;
+
+
+    var DebugTextLayer = new Layer();
+
+    var text = new PointText({
+        point: new Point(10,50),
+        content: 'Unused Debug Text waiting for value',
+        justification: 'topLeft',
+        fillColor:"white",
+        fontSize: 15
+    });
+    var text2= text.clone();
+    text2.position.y = 70;
+
+    var text3= text.clone();
+    text3.position.y=90;
+
+    var text4= text.clone();
+    text4.position.y=110;
+
+
+
+
+  
+
+
+
+        /*
+
+        for (var i = 0; i < values.layers; i++) {
+            var path = new Path({
+                fillColor: i % 2 ? 'cyan' : 'black',
+                closed: true
+            });
+
+            var point = new Point({
+                length: values.falconRadius + values.radius * i,
+                angle: 0
+            });
+            for (var j = 0; j <= values.points; j++) {
+                point.angle += 360 / values.points;
+                if (j == 0) {
+                    path.add(view.center + point);
+                } else {
+                    path.arcTo(view.center + point);
+                }
+            }
+            project.activeLayer.insertChild(0, path);
+        }
+
+        */
+
+
+
+
+
+
+
+
+        //Draws a line from center to mouse point
+        /*
+
+            function onMouseMove(event) {
+                var p1 = view.center;
+                var p2= event.point;
+                var P = new Path(p1,p2);
+                P.strokeColor="black";
+                vector = p2-p1;   
+            }
+        */
+
+
+
+
+    
+
+
+
+
+
+
+        var StarLayer = new Layer(); 
+
+        /****************************************
+              Energy Foraging Stars
+         *****************************************/   
+
+          var raster = new Raster('star');
+        raster.scale(0.1);
+        //raster.pivot = raster.bounds.topLeft;
+        raster.pivot = raster.center;
+     
+        var StarSymbol = new Symbol(raster);
+        var ScaleFactor=1/values.ForageStarsOnScreen;
+        for(var i=0;i<values.ForageStarsOnScreen;i++){
+
+           var placed= StarSymbol.place( new Point(view.bounds.right,view.bounds.bottom)*Point.random());
+           placed.scale(i*ScaleFactor+0.3); //So smalles is 0.3, not 0
+        };
+
+
+        StarSymbol.onMouseDown=function(event){
+            values.Score+=1;
+             text4.content = "Score:"+values.Score;
+             StarSymbol.remove();
+        }
+
+
+       // raster.position = new Point(view.bounds.right,view.bounds.bottom)*Point.random();
+     
+
+
+         /****************************************
+              Background WhiteStars Details
+         *****************************************/   
+
+
+        // The amount of symbol we want to place;
+        //var count = 25; lo sustitui con values.DetalWhiteTarsOnScreen
+
+        // Create a symbol, which we will use to place instances of later:
+        var path = new Path.Circle({
+            center: new Point(0, 0),
+            radius: 2,
+            fillColor: 'white',
+            strokeColor: 'black'
+        });
+
+        var symbol = new Symbol(path);
+
+        // Place the instances of the symbol:
+        for (var i = 0; i < values.DetailWhiteStarsOnScreen; i++) {
+            // The center position is a random point in the view:
+            var center = Point.random() * view.size;
+            var placed = symbol.place(center);
+            var scale = (i + 1) / values.DetailWhiteStarsOnScreen;
+            placed.scale(scale);
+            placed.data.vector = new Point({
+                angle: Math.random() * 360,
+                length : scale * Math.random() / 5
+            });
+        }
+
+        StarLayer.sendToBack();
+    
+
+    var moveStarVector = new Point({
+        angle: 45,
+        length: 0
+    });
+
+    var mouseVector = moveStarVector.clone();
+
+   
+
+   // The onFrame function is called up to 60 times a second:
+    function MoveStars(Layer) {
+
+        StarLayer.activate();
+
+        moveStarVector = moveStarVector + (mouseVector - moveStarVector) / 30;
+        // Run through the active layer's children list and change
+        // the position of the placed symbols:
+
+       var length;
+        for (var i = 0; i < (values.DetailWhiteStarsOnScreen+values.ForageStarsOnScreen); i++) {
+            var item = project.activeLayer.children[i];
+            var size = item.bounds.size;
+
+            //this makes detail white stars move at different speeds them the ForageStars
+            if(i<values.ForageStarsOnScreen){
+                length = moveStarVector.length* values.ForageStarMoveSpeedFactor * size.width*values.ForageStarMoveSpeedFactor;
+            }else{
+                length = moveStarVector.length* values.DetailStarMoveSpeedFactor * size.width*values.DetailStarMoveSpeedFactor;
+            }
+            item.position -= moveStarVector.normalize(length) + item.data.vmoveStarVctor;
+            keepInView(item);
+        }
+    }
+   
+
+    function keepInView(item) {
+        var position = item.position;
+        var itemBounds = item.bounds;
+        var bounds = view.bounds;
+        if (itemBounds.left > bounds.width) {
+            position.x = -item.bounds.width;
+        }
+
+        if (position.x < -itemBounds.width) {
+            position.x = bounds.width + itemBounds.width;
+        }
+
+        if (itemBounds.top > view.size.height) {
+            position.y = -itemBounds.height;
+        }
+
+        if (position.y < -itemBounds.height) {
+            position.y = bounds.height  + itemBounds.height / 2;
+        }
+    }
+ 
+
+
+var BackgroundLayer = new Layer;
+
+var rect = new Path.Rectangle({
+    point: [0, 0],
+    size: [view.size.width , view.size.height],
+    strokeColor: 'white',
+    selected: true
+});
+rect.sendToBack();
+rect.fillColor = '#000000';
+//rect.fillColor = '#999999';//grey
+
+BackgroundLayer.sendToBack();
+
+
+
+</script>
+
+
+
+
+    <canvas id="canvas" resize></canvas>
+</body>
+<img src="/images/star6.png" id="star" alt="Star Image" style="width:1;height:1px;">  <!--Paper necesitaba incluirlo para el raster, pero no queria que se viera en mi pagina por eso lo deje en un pixel-->
+</html>

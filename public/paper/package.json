@@ -1,0 +1,73 @@
+{
+  "name": "paper",
+  "version": "0.9.25",
+  "description": "The Swiss Army Knife of Vector Graphics Scripting",
+  "license": "MIT",
+  "homepage": "http://paperjs.org",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/paperjs/paper.js"
+  },
+  "bugs": {
+    "url": "https://github.com/paperjs/paper.js/issues"
+  },
+  "contributors": [
+    {
+      "name": "Jürg Lehni",
+      "email": "juerg@scratchdisk.com",
+      "url": "http://scratchdisk.com"
+    },
+    {
+      "name": "Jonathan Puckey",
+      "email": "jonathan@studiomoniker.com",
+      "url": "http://studiomoniker.com"
+    }
+  ],
+  "main": "dist/paper-node.js",
+  "browser": "dist/paper-full.js",
+  "files": [
+    "AUTHORS.md",
+    "dist/",
+    "examples/",
+    "LICENSE.txt",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=0.8.0"
+  },
+  "dependencies": {
+    "jsdom": ">=3.1.2",
+    "request": "~2.61.0",
+    "canvas": ">=1.2.9"
+  },
+  "optionalDependencies": {
+    "canvas": ">=1.2.9"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-qunit": "^1.2.1",
+    "prepro": "~0.9.1",
+    "qunitjs": "~1.15.0",
+    "uglify-js": "~2.4.24"
+  },
+  "keywords": [
+    "vector",
+    "graphic",
+    "graphics",
+    "2d",
+    "geometry",
+    "bezier",
+    "curve",
+    "curves",
+    "path",
+    "paths",
+    "canvas",
+    "svg",
+    "paper",
+    "paper.js"
+  ],
+  "readme": "# Paper.js - The Swiss Army Knife of Vector Graphics Scripting\n\nIf you want to work with Paper.js, simply download the latest \"stable\" version from [http://paperjs.org/download/](http://paperjs.org/download/)\n\n- Website: <http://paperjs.org/>\n- Discussion forum: <http://groups.google.com/group/paperjs>\n- Mainline source code: <https://github.com/paperjs/paper.js>\n- Twitter: [@paperjs](http://twitter.com/paperjs)\n- Daily development builds: <http://paperjs.org/download/>\n\n## Installing Paper.js\n\nYou can download prebuilt packages from <http://paperjs.org/download/>.\n\nAs of July 2013, the recommended way to install and maintain Paper.js is through Bower for browsers, and through NPM for Node.js.\n\nFor OSX see <http://madebyhoundstooth.com/blog/install-node-with-homebrew-on-os-x/> for a tutorial explaining how to install Node.js, NPM and Bower.\n\nFor Linux see <http://nodejs.org/download/> to locate 32-bit and 64-bit nodejs binaries as well as sources. It is recommended that you download directly from the nodejs site; the version available via many OS-supplied package managers is out-of-date and doesn't work with many of the packages paper uses. NPM is now included with the nodejs distribution. Once nodejs (with npm) has been installed you can install bower using the following command:\n\n    npm install -g bower\n\nWith Bower installed, simply type this command in your project folder:\n\n    bower install paper\n\nUpon execution, you will find a `paper` folder inside the project's `bower_components` folder. For more information on Bower and to learn about its features for dependence tracking, see <http://bower.io/>.\n\n## Which Version to Use?\n\nThe various distributions come with three different pre-build versions of Paper.js, in minified and normal variants:\n\n- `paper-full.js` – The full version for the browser, including PaperScript support and Acorn.js\n- `paper-core.js` – The core version for the browser, without PaperScript support nor Acorn.js. Use this to shave off some bytes when working with JavaScript directly.\n- `paper-node.js` – The version for Node.js. It is recommended to install this through NPM, see below.\n\n## Installing Paper.js for Node.js through NPM\n\nYou can also use NPM to install Paper.js for Node.js. But before doing so, you need the Cairo Graphics library installed, see <http://cairographics.org/>.\n\n**Installing Cairo and Pango on OSX:**\n\nThe easiest way to install Cairo is install Homebrew <http://mxcl.github.io/homebrew/> then issue the command:\n\n    brew install cairo pango\n\nNote that currently there is an issue on OSX with Cairo. If the above causes errors, the following will most likely fix it:\n\n    PKG_CONFIG_PATH=/opt/X11/lib/pkgconfig/ npm install paper\n\nAlso, whenever you would like to update the modules, you will need to execute:\n\n    PKG_CONFIG_PATH=/opt/X11/lib/pkgconfig/ npm update\n\n**Installing Cairo, Pango and all other dependencies on Debian/Ubuntu Linux:**\n\n    sudo apt-get install libcairo2-dev libpango1.0-dev libssl-dev libjpeg62-dev libgif-dev\n\nYou might also need to install the build-essential package if you don't usually build from c++ sources:\n\n    sudo apt-get install build-essential\n\n**After Cairo has been installed:**\n\nYou should now be able to install the Paper.js module from NPM:\n\n    npm install paper\n\n## Development\n\n**Get the source (for building):**\n\n    git clone --recursive git://github.com/paperjs/paper.js.git\n\n**Get the source (for contributing):**\n\nIf you want to contribute to the project you will have to [make a fork](http://help.github.com/forking/). Then do this:\n\n    git clone --recursive git@github.com:yourusername/paper.js.git\n    cd paper.js\n    git remote add upstream git://github.com/paperjs/paper.js.git\n\n### Refreshing Your Clone\n\nTo fetch changes from origin (your fork), run\n\n    git fetch origin\n\nIf you are working with a fork and would like to fetch from upstream, run\n\n    git fetch upstream\n\nTo update the `jsdoc-toolkit` submodule inside the `build` folder, used to generate the documentation, run\n\n    git submodule update --init\n\n### Setting Up For Building\n\nPaper.js has a couple of dependencies as Bower and NPM modules. See <http://madebyhoundstooth.com/blog/install-node-with-homebrew-on-os-x/> for a tutorial explaining how to install Node.js, NPM and Bower on OSX.\n\nIn order to be able to build Paper.js, after checking out the repository, paper has dependencies that need to be installed. Install them by issuing the following commands from the paper.js directory:\n\n    npm install\n    bower install\n\nYou might find that the npm command fails attempting to fetch packages needed for dependencies due to using https (the default protocol to access the npm registry). If that is the case you can switch to using http for registry access with the following command:\n\n    npm config set registry http://registry.npmjs.org/\n\nNext you need to create minified versions of some of these dependencies. This is handled by the `minify-components.sh` script inside the `build` folder:\n\n    cd build\n    ./minify-components.sh\n\n### Building the Library\n\nThe Paper.js sources are distributed across many separate files, organised in subfolders inside the `src` folder. To compile them all into one distributable file, you can run the `build.sh` script inside the `build` folder:\n\n    cd build\n    ./build.sh\n\nYou will then find the built library inside the `dist` folder, named `paper.js`.\n\n`build.sh` offer two modes:\n\n    commented       Preprocessed but still formated and commented\n    stripped        Formated but without comments (default)\n\nIn order to minify the resulting built versions, you can run the `minify.sh` script:\n\n    cd build\n    ./minify.sh\n\n### Running Directly from Separate Source Files\n\nAs a handy alternative to building the library after each change to try it out in your scripts, there is a helper script `src/load.js` that loads the library directly from all the separate source files in the `src` folder. The shell script `load.sh` in the `build` folder produces the `paper-full.js` and `paper-node.js` files in `dist` as symbolic links to `src/load.js`. This means you can switch between loading from sources and loading a built library simply by running `build.sh` or `load.sh` inside the `build` folder.\n\n    cd build\n    ./load.sh\n\nAnd to go back to a built library\n\n    cd build\n    ./build.sh\n\nNote that your PaperScripts examples do not need to change, they can keep loading `dist/paper-full.js`, which will always do the right thing. Note also that `src/load.js` handles both browsers and Node.js, through the handy PrePro JS preprocessing library <http://github.com/lehni/prepro.js>.\n\n### Branch structure\n\nSince the release of version `v0.9.22`, Paper.js has adopted aspects of the Git-Flow workflow. For now, this just means that all development is taking place in the `develop` branch, which is only merged into `master` when a new release occurs. On this `develop` branch, `src/load.js` is used by default to load the library.\n\n\n### Building the Documentation\n\nSimilarly to building the library, you can run `docs.sh` inside the `build` folder to build the documentation.\n\n    cd build\n    ./docs.sh\n\nYour docs will then be located at `dist/docs`.\n\n### Testing\n\nPaper.js was developed and tested from day 1 using proper unit testing through jQuery's [Qunit](http://docs.jquery.com/Qunit). To run the tests after any change to the library's source, simply open `index.html` inside the `test` folder in your web browser. There should be a green bar at the top, meaning all tests have passed. If the bar is red, some tests have not passed. These will be highlighted and become visible when scrolling down.\n\n### Contributing\n\nThe main Paper.js source tree is hosted on git (a popular [DVCS](http://en.wikipedia.org/wiki/Distributed_revision_control)), thus you should create a fork of the repository in which you perform development. See <http://help.github.com/forking/>.\n\nWe prefer that you send a [*pull request* here on GitHub](http://help.github.com/pull-requests/) which will then be merged into the official main line repository. You need to sign the Paper.js CLA to be able to contribute (see below).\n\nAlso, in your first contribution, add yourself to the end of `AUTHORS.md` (which of course is optional).\n\n#### Creating and Submitting a Patch\n\nAs mentioned earlier in this article, we prefer that you send a [*pull request*](http://help.github.com/pull-requests/) on GitHub.\n\n1. Create a fork of the upstream repository by visiting <https://github.com/paperjs/paper.js/fork>. If you feel insecure, here's a great guide: <http://help.github.com/forking/>\n\n2. Clone of your repository: `git clone https://yourusername@github.com/yourusername/paper.js.git`\n\n3. This is important: Create a so-called *topic branch* based on the `develop` branch: `git checkout -tb name-of-my-patch develop` where `name-of-my-patch` is a short but descriptive name of the patch you're about to create. Don't worry about the perfect name though -- you can change this name at any time later on.\n\n4. Hack! Make your changes, additions, etc., commit them then push them to your GitHub fork: `git push origin name-of-my-patch`\n\n5. Send a pull request to the upstream repository's owner by visiting your repository's site at GitHub (i.e. https://github.com/yourusername/paper.js) and press the \"Pull Request\" button. Make sure you are creating the pull request to the `develop` branch, not the `master` branch. Here's a good guide on pull requests: <http://help.github.com/pull-requests/>\n\n**Use one topic branch per feature** -- don't mix different kinds of patches in the same branch. Instead, merge them all together into your `develop` branch (or develop everything in your `develop` branch and then cherry-pick-and-merge into the different topic branches). Git provides for an extremely flexible workflow, which in many ways causes more confusion than it helps you when new to collaborative software development. The guides provided by GitHub at <http://help.github.com/> are a really good starting point and reference.\nIf you are fixing an issue, a convenient way to name the branch is to use the issue number as a prefix, like this: `git checkout -tb 53-feature-manually-select-language`.\n\n#### Contributor License Agreement\n\nBefore we can accept any contributions to Paper.js, you need to sign this [CLA](http://en.wikipedia.org/wiki/Contributor_License_Agreement):\n\n[Contributor License Agreement](https://spreadsheets.google.com/a/paperjs.org/spreadsheet/embeddedform?formkey=dENxd0JBVDY2REo3THVuRmh4YjdWRlE6MQ)\n\n> The purpose of this agreement is to clearly define the terms under which intellectual property has been contributed to Paper.js and thereby allow us to defend the project should there be a legal dispute regarding the software at some future time.\n\nFor a list of contributors, please see [AUTHORS](https://github.com/paperjs/paper.js/blob/master/AUTHORS.md)\n\n## License\n\nDistributed under the MIT license. See [LICENSE.txt](https://github.com/paperjs/paper.js/blob/master/LICENSE.txt) for details.\n",
+  "readmeFilename": "README.md",
+  "_id": "paper@0.9.25",
+  "_from": "paper@~0.9.25"
+}
