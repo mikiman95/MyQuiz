@@ -32,11 +32,11 @@
             AutoRotateGun:0,
 
             Score:0,
-            ForageStarsOnScreen:20,  //20
+            ForageStarsOnScreen:20,  
             ForageStarMoveSpeedFactor:0.02,
 
-            DetailWhiteStarsOnScreen:25, //25
-            DetailStarMoveSpeedFactor:0.1,
+            DetailWhiteStarsOnScreen:25, 
+            DetailStarMoveSpeedFactor:0.015, //0.1 like snow
 
             FalconRadius: 50 
         };
@@ -214,9 +214,10 @@
             //ShieldPath.rotate(1,FalconCenter);
             //raster.rotate(1);
            // GunPath.rotate(-1,FalconCenter);
-           if(values.AutoRotateShield==1){ShieldPath.rotate(1,FalconCenter);}
-           if(values.AutoRotateGun==1){GunPath.rotate(-1,FalconCenter);}
-           if(Player.Role==ROLES.Pilot){MoveStars();}            
+           if(Player.Role!=ROLES.ShieldMaster   && values.AutoRotateShield==1){ShieldPath.rotate(1,FalconCenter);}
+           if(Player.Role!=ROLES.Gunner         && values.AutoRotateGun==1){GunPath.rotate(-1,FalconCenter);}
+           //if(Player.Role==ROLES.Pilot){MoveStars();}       
+           MoveStars();     
         }
 
         function onMouseMove(event) {
@@ -268,7 +269,7 @@
 
         function onMouseDown(event){
             FalconOuterPath.fillColor.hue +=15;
-            Player.changeRole();
+            //Player.changeRole();
                
             //these two lines quickfix Shield autorotate flying off into nowhere. but is not a good style of solution... Rethink this.
             if(values.ShipFollowsMouse==1){
@@ -319,13 +320,25 @@
             }
 
             if(event.key == 't') {
-               ToggleDebugText();
+               ToggleDebugText(); //toggles debug text 1or0 and toggles opacity 1or0
             }
             
             
         }
 
-
+        /*TODO Fix anduse this for DRY
+            //ActionValor is a second thing to turn o or off
+            function ToggleElement(valorToToggle,actionValor){
+            if (values["valorToToggle"]==1){
+                values["valorToToggle"]=0;
+                actionValor=0;
+            }else{
+                values["valorToToggle"]=1;
+                actionValor=1;
+            }
+        }
+        */
+        //ActionValor is a second thing to turn o or off
         function ToggleDebugText(){
             if (values.ShowDebugTexts==1){
                 values.ShowDebugTexts=0;
@@ -334,6 +347,12 @@
                 values.ShowDebugTexts=1;
                 DebugTextLayer.opacity=1;
             }
+        }
+        function ToggleAutoRotateGun(){
+             values.AutoRotateGun=values.AutoRotateGun==1?0:1;    
+        }
+        function ToggleAutoRotateShield(){
+             values.AutoRotateShield=values.AutoRotateShield==1?0:1; 
         }
 
 
@@ -384,22 +403,59 @@
     var DebugTextLayer = new Layer();
 
     var text = new PointText({
-        point: new Point(10,50),
+        point: new Point(10,150),
         content: 'Unused Debug Text waiting for value',
         justification: 'topLeft',
         fillColor:"white",
         fontSize: 15
     });
     var text2= text.clone();
-    text2.position.y = 70;
+    text2.position.y = 170;
 
     var text3= text.clone();
-    text3.position.y=90;
+    text3.position.y=190;
 
     var text4= text.clone();
-    text4.position.y=110;
+    text4.position.y=210;
 
 
+
+
+      var ControlPadLayer = new Layer()
+        var ButtonPath = new Path.Circle({
+            center: new Point(view.bounds.left+100, view.bounds.top+50),
+            radius: 25,
+            fillColor: 'purple',
+            strokeColor: 'black',
+            onMouseDown:function(event){
+                         Player.changeRole();
+            }
+        });
+
+
+        var ToggleDebugTextButton = ButtonPath.clone();
+        ToggleDebugTextButton.position += new Point(-50,50);
+        ToggleDebugTextButton.fillColor= "orange";
+        ToggleDebugTextButton.onMouseDown=function(event){
+              // ToggleElement(values.ShowDebugTexts,DebugTextLayer.opacity);
+              ToggleDebugText();
+        }
+
+        var ToggleAutoShieldButton = ButtonPath.clone();
+        ToggleAutoShieldButton.position += new Point(0,50);
+        ToggleAutoShieldButton.fillColor= "green";
+        ToggleAutoShieldButton.onMouseDown=function(event){
+               //ToggleElement(values.AutoRotateShield);
+               ToggleAutoRotateShield();
+        }
+
+        var ToggleAutoGunButton = ButtonPath.clone();
+        ToggleAutoGunButton.position += new Point(50,50);
+        ToggleAutoGunButton.fillColor= "red";
+        ToggleAutoGunButton.onMouseDown=function(event){
+              // ToggleElement(values.AutoRotateGun);
+              ToggleAutoRotateGun();
+        }
 
 
   
@@ -477,14 +533,25 @@
 
            var placed= StarSymbol.place( new Point(view.bounds.right,view.bounds.bottom)*Point.random());
            placed.scale(i*ScaleFactor+0.3); //So smalles is 0.3, not 0
+
+            //placed.onClick = function(event) { //http://paperjs.org/reference/item/#onclick
+            placed.onMouseEnter=function(){
+                if(Player.Role == ROLES.Forager){
+                     values.Score+=1;
+                     text4.content = "Score:"+values.Score;
+                     this.position = Point.random()*view.size*3;//Makes them apear off screen Most time
+                     //this.scale(new Size(1.1,1.1)*Size.random());
+                }
+
+               
+           }
+
+
+
         };
 
 
-        StarSymbol.onMouseDown=function(event){
-            values.Score+=1;
-             text4.content = "Score:"+values.Score;
-             StarSymbol.remove();
-        }
+     
 
 
        // raster.position = new Point(view.bounds.right,view.bounds.bottom)*Point.random();
@@ -539,7 +606,17 @@
 
         StarLayer.activate();
 
-        moveStarVector = moveStarVector + (mouseVector - moveStarVector) / 30;
+
+        if(Player.Role==ROLES.Pilot){
+             moveStarVector = moveStarVector + (mouseVector - moveStarVector) / 30;
+        }
+        else{
+            var tempVector= getVector(view.center,view.center-new Point(200,200));
+            moveStarVector = tempVector + (mouseVector - moveStarVector) / 30;
+        }
+
+
+        
         // Run through the active layer's children list and change
         // the position of the placed symbols:
 
@@ -554,7 +631,7 @@
             }else{
                 length = moveStarVector.length* values.DetailStarMoveSpeedFactor * size.width*values.DetailStarMoveSpeedFactor;
             }
-            item.position -= moveStarVector.normalize(length) + item.data.vmoveStarVctor;
+            item.position -= moveStarVector.normalize(length) + item.data.moveStarVector;
             keepInView(item);
         }
     }
@@ -569,7 +646,7 @@
         }
 
         if (position.x < -itemBounds.width) {
-            position.x = bounds.width + itemBounds.width;
+            position.x = bounds.width + itemBounds.width/2;
         }
 
         if (itemBounds.top > view.size.height) {
