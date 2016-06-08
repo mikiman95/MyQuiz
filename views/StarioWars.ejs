@@ -423,7 +423,8 @@
 
       var ControlPadLayer = new Layer()
         var ButtonPath = new Path.Circle({
-            center: new Point(view.bounds.left+50, view.bounds.top+50),
+            //center: new Point(view.bounds.left+50, view.bounds.top+50),//for square
+            center: new Point(view.bounds.left+100, view.bounds.top+50),//for tripad
             radius: 25,
             fillColor: 'purple',
             strokeColor: 'black',
@@ -434,7 +435,8 @@
 
 
         var ToggleDebugTextButton = ButtonPath.clone();
-        ToggleDebugTextButton.position += new Point(0,50);
+        //ToggleDebugTextButton.position += new Point(0,50);
+        ToggleDebugTextButton.position += new Point(-50,50);
         ToggleDebugTextButton.fillColor= "orange";
         ToggleDebugTextButton.onMouseDown=function(event){
               // ToggleElement(values.ShowDebugTexts,DebugTextLayer.opacity);
@@ -442,7 +444,8 @@
         }
 
         var ToggleAutoShieldButton = ButtonPath.clone();
-        ToggleAutoShieldButton.position += new Point(50,0);
+        //ToggleAutoShieldButton.position += new Point(50,0);
+        ToggleAutoShieldButton.position += new Point(0,50);
         ToggleAutoShieldButton.fillColor= "green";
         ToggleAutoShieldButton.onMouseDown=function(event){
                //ToggleElement(values.AutoRotateShield);
@@ -539,7 +542,8 @@
                 if(Player.Role == ROLES.Forager){
                      values.Score+=1;
                      text4.content = "Score:"+values.Score;
-                     this.position = Point.random()*view.size*1.5;
+                     this.position = Point.random()*view.size*3;//Makes them apear off screen Most time
+
                      //this.scale(new Size(1.1,1.1)*Size.random());
                 }
 
@@ -611,7 +615,8 @@
              moveStarVector = moveStarVector + (mouseVector - moveStarVector) / 30;
         }
         else{
-            var tempVector= getVector(view.center,new Point(0,0));
+            //var tempVector= getVector(view.center,new Point(0,0));  Moves too fast
+            var tempVector= getVector(view.center,view.center-new Point(200,200));
             moveStarVector = tempVector + (mouseVector - moveStarVector) / 30;
         }
 
@@ -631,7 +636,7 @@
             }else{
                 length = moveStarVector.length* values.DetailStarMoveSpeedFactor * size.width*values.DetailStarMoveSpeedFactor;
             }
-            item.position -= moveStarVector.normalize(length) + item.data.vmoveStarVctor;
+            item.position -= moveStarVector.normalize(length) + item.data.moveStarVector;
             keepInView(item);
         }
     }
@@ -646,7 +651,7 @@
         }
 
         if (position.x < -itemBounds.width) {
-            position.x = bounds.width + itemBounds.width;
+            position.x = bounds.width + itemBounds.width/2;
         }
 
         if (itemBounds.top > view.size.height) {
